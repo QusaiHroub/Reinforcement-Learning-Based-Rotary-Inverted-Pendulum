@@ -35,6 +35,7 @@ utility.State_is_equal.restype = ctypes.c_bool
 utility.State_get_at.argtypes = [ctypes.c_void_p, ctypes.c_int]
 utility.State_get_at.restype = ctypes.c_double
 utility.State_set_at.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_double]
+utility.State_copy.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
 #State getters
 utility.State_get_pendulum_angle.argtypes = [ctypes.c_void_p]
@@ -79,6 +80,9 @@ class State(object):
     def len (self):
         return utility.State_len(self.obj)
 
+    def copy (self, target):
+        utility.State_copy(self.obj, target.obj)
+
     #State getters
     def get_pendulum_angle (self):
         return utility.State_get_pendulum_angle(self.obj)
@@ -108,3 +112,4 @@ class State(object):
 #Utility methods
 def angle_normalize (angle):
     return utility.angle_normalize(angle)
+

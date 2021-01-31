@@ -48,6 +48,10 @@ export extern "C" {
         return self->size();
     }
 
+    void State_copy (State* self, State* target) {
+        (*self) = (*target);
+    }
+
     //State getters
     double State_get_pendulum_angle (State* self) {
         return self->getPendulumAngle();

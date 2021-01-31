@@ -28,14 +28,14 @@ export double angleNormalize(double angle);
 
 export class State {
 private:
-    const unsigned short SIZE = 4;
+    static const unsigned short SIZE = 4;
 
     //All these values are in radians.
     //0 - pendulum angle
     //1 - pendulum angular velocity
     //2 - motor angle
     //3 - motor angular velocity
-    double mStateParam[4];
+    double mStateParam[SIZE];
 
 public:
     State (double pendulumAngle = 0.0, double pendulumAngularVelocity = 0.0,
@@ -115,7 +115,11 @@ public:
         return *(mStateParam + index);
     }
     const double& operator[] (const unsigned int index) const {
-        return (*this)[index];
+        if (index >= SIZE) {
+            throw "Index out of range";
+        }
+
+        return *(mStateParam + index);
     }
 
     /**
@@ -129,7 +133,7 @@ public:
     bool operator== (const State& state) {
         bool result = true;
 
-        for (int i = 0; i < SIZE; i++) {
+        for (int i = 0; i < SIZE && result; i++) {
             result = result && ((*this)[i] == state[i]);
         }
 

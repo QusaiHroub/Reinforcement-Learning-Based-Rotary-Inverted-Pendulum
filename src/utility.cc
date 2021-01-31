@@ -39,7 +39,8 @@ private:
 public:
     State (double pendulumAngle = 0.0, double pendulumAngularVelocity = 0.0,
            double motorAngle = 0.0, double motorAngularVelocity = 0.0)
-            : mPendulumAngle(pendulumAngle), mMotorAngle(motorAngle),
+            : mPendulumAngle(angleNormalize(pendulumAngle)),
+           mMotorAngle(angleNormalize(motorAngle)),
            mPendulumAngularVelocity(pendulumAngularVelocity),
            mMotorAngularVelocity(motorAngularVelocity) {}
 

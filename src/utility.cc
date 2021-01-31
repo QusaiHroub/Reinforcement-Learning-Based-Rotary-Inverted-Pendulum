@@ -31,31 +31,43 @@ private:
     const unsigned short SIZE = 4;
 
     //All these values are in radians.
-    double mPendulumAngle,
-           mMotorAngle,
-           mPendulumAngularVelocity,
-           mMotorAngularVelocity;
+    //0 - pendulum angle
+    //1 - pendulum angular velocity
+    //2 - motor angle
+    //3 - motor angular velocity
+    double mStateParam[4];
 
 public:
     State (double pendulumAngle = 0.0, double pendulumAngularVelocity = 0.0,
            double motorAngle = 0.0, double motorAngularVelocity = 0.0)
-            : mPendulumAngle(angleNormalize(pendulumAngle)),
-           mMotorAngle(angleNormalize(motorAngle)),
-           mPendulumAngularVelocity(pendulumAngularVelocity),
-           mMotorAngularVelocity(motorAngularVelocity) {}
+            : mStateParam{angleNormalize(pendulumAngle),
+                          angleNormalize(motorAngle), pendulumAngularVelocity,
+                          motorAngularVelocity} {}
 
     //Getters
     double getPendulumAngle () {
-        return mPendulumAngle;
+        return mStateParam[0];
+    }
+    double getPendulumAngle () const {
+        return mStateParam[0];
     }
     double getMotorAngle () {
-        return mMotorAngle;
+        return mStateParam[2];
+    }
+    double getMotorAngle () const {
+        return mStateParam[2];
     }
     double getPendulumAngularVelocity () {
-        return mPendulumAngularVelocity;
+        return mStateParam[1];
+    }
+    double getPendulumAngularVelocity () const {
+        return mStateParam[1];
     }
     double getMotorAngularVelocity () {
-        return mMotorAngularVelocity;
+        return mStateParam[3];
+    }
+    double getMotorAngularVelocity () const {
+        return mStateParam[3];
     }
 
     /**
@@ -68,17 +80,17 @@ public:
     }
 
     //Setters
-    void setPendulumAngle (double pendulumAngle) {
-        mPendulumAngle = angleNormalize(pendulumAngle);
+    void setPendulumAngle (const double pendulumAngle) {
+        mStateParam[0] = angleNormalize(pendulumAngle);
     }
-    void setMotorAngle (double motorAngle) {
-        mMotorAngle = angleNormalize(motorAngle);
+    void setMotorAngle (const double motorAngle) {
+        mStateParam[2] = angleNormalize(motorAngle);
     }
-    void setPendulumAngularVelocity (double pendulumAngularVelocity) {
-        mPendulumAngularVelocity = pendulumAngularVelocity;
+    void setPendulumAngularVelocity (const double pendulumAngularVelocity) {
+        mStateParam[1] = pendulumAngularVelocity;
     }
-    void setMotorAngularVelocity (double motorAngularVelocity) {
-        mMotorAngularVelocity = motorAngularVelocity;
+    void setMotorAngularVelocity (const double motorAngularVelocity) {
+        mStateParam[3] = motorAngularVelocity;
     }
 
     /**
@@ -92,18 +104,15 @@ public:
      *
      * @return double - the value of data member at that index
      */
-    double &operator[] (unsigned int index) {
+    double& operator[] (const unsigned int index) {
         if (index >= SIZE) {
             throw "Index out of range";
         }
 
-        switch (index) {
-            case 0: return mPendulumAngle;
-            case 1: return mPendulumAngularVelocity;
-            case 2: return mMotorAngle;
-        }
-
-        return mMotorAngularVelocity;
+        return *(mStateParam + index);
+    }
+    const double& operator[] (const unsigned int index) const {
+        return (*this)[index];
     }
 
     /**
@@ -114,7 +123,7 @@ public:
      *
      * @return bool - true if the two states are the same
      */
-    bool operator== (State &state) {
+    bool operator== (const State& state) {
         bool result = true;
 
         for (int i = 0; i < SIZE; i++) {
@@ -122,6 +131,9 @@ public:
         }
 
         return result;
+    }
+    bool operator== (const State& state) const {
+        return (*this) == state;
     }
 };
 
@@ -133,7 +145,7 @@ public:
  *
  * @return double - normalized angle
  */
-double angleNormalize(double angle) {
+double angleNormalize(const double angle) {
     return (fmod((angle + PI), (2 * PI)) - PI);
 }
     

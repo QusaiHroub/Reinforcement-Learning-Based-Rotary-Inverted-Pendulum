@@ -79,6 +79,49 @@ public:
     void setMotorAngularVelocity (double motorAngularVelocity) {
         mMotorAngularVelocity = motorAngularVelocity;
     }
+
+    /**
+     * intexing the data member of the state
+     *
+     * @tparam index is of the {int} type
+     * @param index - index of the data member
+     *
+     * @throws Index out of range when the index is more than or equal to
+     * the size
+     *
+     * @return double - the value of data member at that index
+     */
+    double &operator[] (unsigned int index) {
+        if (index >= SIZE) {
+            throw "Index out of range";
+        }
+
+        switch (index) {
+            case 0: return mPendulumAngle;
+            case 1: return mPendulumAngularVelocity;
+            case 2: return mMotorAngle;
+        }
+
+        return mMotorAngularVelocity;
+    }
+
+    /**
+     * compare two states
+     *
+     * @tparam state is of the {State &} type
+     * @param state - the second state to compare with it
+     *
+     * @return bool - true if the two states are the same
+     */
+    bool operator== (State &state) {
+        bool result = true;
+
+        for (int i = 0; i < SIZE; i++) {
+            result = result && ((*this)[i] == state[i]);
+        }
+
+        return result;
+    }
 };
 
 /**

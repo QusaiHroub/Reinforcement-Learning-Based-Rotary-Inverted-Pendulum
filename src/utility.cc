@@ -43,6 +43,9 @@ public:
             : mStateParam{angleNormalize(pendulumAngle),
                           angleNormalize(motorAngle), pendulumAngularVelocity,
                           motorAngularVelocity} {}
+    State (const State& state) {
+        (*this) = state;
+    }
 
     //Getters
     double getPendulumAngle () {
@@ -134,6 +137,19 @@ public:
     }
     bool operator== (const State& state) const {
         return (*this) == state;
+    }
+
+    State& operator= (const State& state) {
+
+        if (this == &state) {
+            return *this;
+        }
+
+
+        for (int i = 0; i < (*this).size(); i++) {
+            (*this)[i] = state[i];
+        }
+        return *this;
     }
 };
 

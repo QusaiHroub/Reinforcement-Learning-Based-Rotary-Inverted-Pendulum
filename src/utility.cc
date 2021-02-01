@@ -22,7 +22,7 @@ module;
 
 export module utility;
 
-export const double PI = 3.142;
+export const double PI = 3.141592865358979;
 
 export double angleNormalize(double angle);
 
@@ -186,6 +186,10 @@ public:
  * @return double - normalized angle
  */
 double angleNormalize(const double angle) {
-    return (fmod((angle + PI), (2 * PI)) - PI);
+    double result = fmod((angle + PI), (2 * PI));
+    if (result < 0.0) {
+        result += 2.0 * PI;
+    }
+    return (result - PI);
 }
     

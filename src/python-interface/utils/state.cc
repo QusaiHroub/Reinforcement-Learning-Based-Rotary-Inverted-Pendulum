@@ -18,7 +18,7 @@
 
 import state;
 
-export extern "C" {
+extern "C" {
     State* State_new(double pendulumAngle, double motorAngle,
            double pendulumAngularVelocity, double motorAngularVelocity) {
         return new State(pendulumAngle, pendulumAngularVelocity, motorAngle,

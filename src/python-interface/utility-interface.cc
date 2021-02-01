@@ -37,7 +37,7 @@ export extern "C" {
     }
 
     void State_set_at(State* self, int index, double value) {
-        (*self)[index] = value;
+        (*self).setAt(index, value);
     }
 
     bool State_is_equal(State* self, State* state) {

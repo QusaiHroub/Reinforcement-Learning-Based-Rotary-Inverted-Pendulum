@@ -37,13 +37,20 @@ private:
     //3 - motor angular velocity
     double mStateParam[SIZE];
 
+    void (State::*const setters[SIZE]) (const double);
+
 public:
     State (double pendulumAngle = 0.0, double pendulumAngularVelocity = 0.0,
            double motorAngle = 0.0, double motorAngularVelocity = 0.0)
             : mStateParam{angleNormalize(pendulumAngle),
                           angleNormalize(motorAngle), pendulumAngularVelocity,
-                          motorAngularVelocity} {}
-    State (const State& state) {
+                          motorAngularVelocity}, setters{&State::setPendulumAngle,
+                          &State::setPendulumAngularVelocity, &State::setMotorAngle,
+                          &State::setMotorAngularVelocity} {}
+
+    State (const State& state): setters{&State::setPendulumAngle,
+                          &State::setPendulumAngularVelocity, &State::setMotorAngle,
+                          &State::setMotorAngularVelocity} {
         (*this) = state;
     }
 
@@ -98,8 +105,9 @@ public:
 
     /**
      * intexing the data member of the state
+     * You can't use this operator to assign. Use setAt instead of it.
      *
-     * @tparam index is of the {int} type
+     * @tparam index is of the {const unsigned short} type
      * @param index - index of the data member
      *
      * @throws Index out of range when the index is more than or equal to
@@ -107,14 +115,14 @@ public:
      *
      * @return double - the value of data member at that index
      */
-    double& operator[] (const unsigned int index) {
+    double operator[] (const unsigned short index) {
         if (index >= SIZE) {
             throw "Index out of range";
         }
 
         return *(mStateParam + index);
     }
-    const double& operator[] (const unsigned int index) const {
+    const double operator[] (const unsigned short index) const {
         if (index >= SIZE) {
             throw "Index out of range";
         }
@@ -134,7 +142,7 @@ public:
         bool result = true;
 
         for (int i = 0; i < SIZE && result; i++) {
-            result = result && ((*this)[i] == state[i]);
+            result = result && (mStateParam[i] == state[i]);
         }
 
         return result;
@@ -149,11 +157,23 @@ public:
             return *this;
         }
 
-
         for (int i = 0; i < (*this).size(); i++) {
-            (*this)[i] = state[i];
+            ((*this).*setters[i])(state[i]);
         }
         return *this;
+    }
+
+    /**
+     * set At - interface to setters
+     *
+     * @tparam index is of the {const unsigned short} type
+     * @tparam double is of the {double} type
+     * @param index - the index of the value you want to set/reblace
+     * @param value - the new value to be set
+     *
+     */
+    void setAt(const unsigned short index, double value) {
+        ((*this).*setters[index])(value);
     }
 };
 

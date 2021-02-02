@@ -22,7 +22,7 @@ import numpy as np
 from gym import spaces
 from gym.utils import seeding
 
-from utils.state import State
+from utils.ustate import State
 
 class PendulumEnv(gym.Env):
     metadata = {

@@ -19,7 +19,7 @@
 import ctypes
 from ctypes import cdll
 
-UTILITY_PATH = './state.so'
+UTILITY_PATH = './utils/state.so'
 utility = cdll.LoadLibrary(UTILITY_PATH)
 
 #State methods and constructors

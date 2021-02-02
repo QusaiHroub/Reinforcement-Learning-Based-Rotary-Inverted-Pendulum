@@ -19,7 +19,7 @@
 import ctypes
 from ctypes import cdll
 
-UTILITY_PATH = './math.so'
+UTILITY_PATH = './utils/math.so'
 utility = cdll.LoadLibrary(UTILITY_PATH)
 
 utility.angle_normalize.argtypes = [ctypes.c_double]

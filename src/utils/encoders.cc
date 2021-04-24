@@ -67,3 +67,7 @@ void PendulumEncoder::ISR() {
 float_4b PendulumEncoder::getAngle () {
 	return internal.encoder * 360.0 / NUMBER_OF_FULL_ROTATE_PULSES;
 }
+
+float_4b PendulumEncoder::getVelocity () {
+	return velocity;
+}

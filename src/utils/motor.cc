@@ -21,14 +21,14 @@
 #include <softPwm.h>
 
 Motor::Motor(char motorPin1, char motorPin2, char motorPWM) :
-		mMotorPin1(motorPin1), mMotorPin2(motorPin2),
-		mMotorPWM(motorPWM) {
+	mMotorPin1(motorPin1), mMotorPin2(motorPin2),
+	mMotorPWM(motorPWM) {
 
-		pinMode(mMotorPin1, OUTPUT);
-        pinMode(mMotorPin2, OUTPUT);
-		softPwmCreate(mMotorPWM, PWM_OUTPUT, 100);
+	pinMode(mMotorPin1, OUTPUT);
+	pinMode(mMotorPin2, OUTPUT);
+	softPwmCreate(mMotorPWM, PWM_OUTPUT, 100);
 
-		stop();
+	stop();
 }
 
 Motor::~Motor() {

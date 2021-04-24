@@ -33,14 +33,14 @@ class QThread {
 };
 
 void QThread::start(auto function) {
-    active = true;
-    thread t([=]() {
-        while(active.load()) {
-            if(!active.load()) {
-            	return;
-            }
-            function();
-        }
+	active = true;
+	thread t([=]() {
+		while(active.load()) {
+			if(!active.load()) {
+				return;
+			}
+			function();
+		}
     });
     t.detach();
 }

@@ -33,6 +33,7 @@ public:
 	~Motor();
 
 	void act(short);
+	void act(short) const;
 };
 
 #endif

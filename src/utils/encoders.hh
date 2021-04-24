@@ -21,7 +21,7 @@
 
 #include "type.hh"
 
-class PendulumEncoder {
+class MotorEncoder {
 	const float_4b NUMBER_OF_FULL_ROTATE_PULSES = 540.0;
 
 	const int_8b mWireA;
@@ -42,7 +42,7 @@ class PendulumEncoder {
 	float_4b angle_post, angle_previous, velocity;
 
 public:
-	PendulumEncoder(int_8b, int_8b);
+	MotorEncoder(int_8b, int_8b);
 	float_4b getAngle();
 	float_4b getVelocity();
 	void ISR();

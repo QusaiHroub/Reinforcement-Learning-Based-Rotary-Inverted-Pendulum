@@ -19,14 +19,19 @@
  #include "pendulum.hh"
 
  Pendulum::Pendulum () {
- 	mPendulumVelocityTimer.start([&]() {
-        M_PENDULUM_ENCODER->ISR();
+ 	mMotorVelocityTimer.start([&]() {
+        M_MOTOR_ENCODER->ISR();
+    });
+
+    mUpdateStateThread.start([&]() {
+    	mState.setMotorAngle (M_MOTOR_ENCODER->getAngle ());
+    	mState.setMotorAngularVelocity (M_MOTOR_ENCODER->getVelocity ());
     });
  }
 
  Pendulum::~Pendulum () {
  	delete M_MOTOR;
- 	delete M_PENDULUM_ENCODER;
+ 	delete M_MOTOR_ENCODER;
  }
 
  void Pendulum::updateMotorPWM (const int_16b newValue) {

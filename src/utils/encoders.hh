@@ -1,4 +1,4 @@
-/* util/type.hh
+/* util/encoders.hh
  *
  * This file is part of Reinforcement Learning-based Rotary Inverted Pendulum
  * Graduation Project.
@@ -16,15 +16,37 @@
  * more details.
  */
 
-#ifndef TYPE_HH
-#define TYPE_HH
+#ifndef ENCODERS_HH
+#define ENCODERS_HH
 
-typedef char int_8b;
-typedef unsigned char uint_8b;
-typedef float float_4b;
-typedef unsigned short size_16b;
-typedef short int_16b;
-typedef long int_64b;
-typedef int int_32b;
+#include "type.hh"
+
+class PendulumEncoder {
+	const float_4b NUMBER_OF_FULL_ROTATE_PULSES = 540.0;
+
+	const int_8b mWireA;
+	const int_8b mWireB;
+
+	struct Internal {
+		static int_64b encoder;
+		static int_32b stateA, stateB;
+
+		static const int_8b *mWireA;
+		static const int_8b *mWireB;
+
+		static void A();
+		static void B();
+	} internal;
+
+	int_8b t = 0;
+	float_4b angle_post, angle_previous, velocity;
+
+	void ISR();
+
+public:
+	PendulumEncoder(int_8b, int_8b);
+	float_4b getAngle();
+	float_4b getVelocity();
+};
 
 #endif

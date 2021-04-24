@@ -1,4 +1,4 @@
-/* util/type.hh
+/* pendulum.hh
  *
  * This file is part of Reinforcement Learning-based Rotary Inverted Pendulum
  * Graduation Project.
@@ -16,13 +16,25 @@
  * more details.
  */
 
-#ifndef TYPE_HH
-#define TYPE_HH
+#ifndef PENDULUM_HH
+#define PENDULUM_HH
 
-typedef char int_8b;
-typedef unsigned char uint_8b;
-typedef float float_4b;
-typedef unsigned short size_16b;
-typedef short int_16b;
+#include "utils/motor.hh"
+#include "utils/pins.hh"
+#include "utils/type.hh"
+#include "utils/pstate.hh"
+
+class Pendulum {
+	const Motor *const M_MOTOR = new Motor(MOTOR_PIN_1, MOTOR_PIN_2, MOTOR_ENABLE_DC_1);
+	PState mState;
+
+public:
+	Pendulum();
+	~Pendulum();
+
+	void updateMotorPWM(const int_16b);
+	void stopMotor();
+	PState getState();
+};
 
 #endif

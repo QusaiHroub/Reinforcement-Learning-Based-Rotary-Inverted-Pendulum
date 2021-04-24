@@ -1,4 +1,4 @@
-/* util/type.hh
+/* util/pins.hh
  *
  * This file is part of Reinforcement Learning-based Rotary Inverted Pendulum
  * Graduation Project.
@@ -16,13 +16,13 @@
  * more details.
  */
 
-#ifndef TYPE_HH
-#define TYPE_HH
+#ifndef PINS_HH
+#define PINS_HH
 
-typedef char int_8b;
-typedef unsigned char uint_8b;
-typedef float float_4b;
-typedef unsigned short size_16b;
-typedef short int_16b;
+#include "type.hh"
+
+const uint_8b MOTOR_PIN_1 = 10;
+const uint_8b MOTOR_PIN_2 = 14;
+const uint_8b MOTOR_ENABLE_DC_1 = 1;
 
 #endif

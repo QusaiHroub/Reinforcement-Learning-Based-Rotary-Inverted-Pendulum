@@ -23,9 +23,15 @@
 #include "utils/pins.hh"
 #include "utils/type.hh"
 #include "utils/pstate.hh"
+#include "utils/encoders.hh"
+#include "utils/timer.hh"
 
 class Pendulum {
-	const Motor *const M_MOTOR = new Motor(MOTOR_PIN_1, MOTOR_PIN_2, MOTOR_ENABLE_DC_1);
+	Motor *const M_MOTOR = new Motor(MOTOR_PIN_1, MOTOR_PIN_2, MOTOR_ENABLE_DC_1);
+	PendulumEncoder *const M_PENDULUM_ENCODER =
+		new PendulumEncoder(PENDULUM_ENCODER_WIRE_A, PENDULUM_ENCODER_WIRE_B);
+
+	Timer mPendulumVelocityTimer;
 	PState mState;
 
 public:

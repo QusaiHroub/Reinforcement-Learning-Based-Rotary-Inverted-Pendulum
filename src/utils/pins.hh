@@ -24,5 +24,7 @@
 const uint_8b MOTOR_PIN_1 = 10;
 const uint_8b MOTOR_PIN_2 = 14;
 const uint_8b MOTOR_ENABLE_DC_1 = 1;
+const uint_8b PENDULUM_ENCODER_WIRE_A = 0;
+const uint_8b PENDULUM_ENCODER_WIRE_B = 2;
 
 #endif

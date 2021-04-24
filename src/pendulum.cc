@@ -18,10 +18,15 @@
 
  #include "pendulum.hh"
 
- Pendulum::Pendulum () {}
+ Pendulum::Pendulum () {
+ 	mPendulumVelocityTimer.start([&]() {
+        M_PENDULUM_ENCODER->ISR();
+    });
+ }
 
  Pendulum::~Pendulum () {
  	delete M_MOTOR;
+ 	delete M_PENDULUM_ENCODER;
  }
 
  void Pendulum::updateMotorPWM (const int_16b newValue) {

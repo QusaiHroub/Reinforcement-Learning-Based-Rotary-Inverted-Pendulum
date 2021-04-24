@@ -41,12 +41,11 @@ class PendulumEncoder {
 	int_8b t = 0;
 	float_4b angle_post, angle_previous, velocity;
 
-	void ISR();
-
 public:
 	PendulumEncoder(int_8b, int_8b);
 	float_4b getAngle();
 	float_4b getVelocity();
+	void ISR();
 };
 
 #endif

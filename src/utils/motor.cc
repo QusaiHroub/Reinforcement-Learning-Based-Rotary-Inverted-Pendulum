@@ -62,7 +62,3 @@ void Motor::act(short value) {
         stop();
     }
 }
-
-void Motor::act(short value) const {
-    act(value);
-}

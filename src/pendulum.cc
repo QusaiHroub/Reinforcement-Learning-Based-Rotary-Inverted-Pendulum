@@ -24,8 +24,9 @@
     });
 
     mUpdateStateThread.start([&]() {
-    	mState.setMotorAngle (M_MOTOR_ENCODER->getAngle ());
-    	mState.setMotorAngularVelocity (M_MOTOR_ENCODER->getVelocity ());
+    	mState.setMotorAngle (convertDegToRad (M_MOTOR_ENCODER->getAngle ()));
+    	mState.setMotorAngularVelocity (convertDegToRad (
+    		M_MOTOR_ENCODER->getVelocity ()));
     });
  }
 

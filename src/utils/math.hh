@@ -24,6 +24,7 @@
 #include "type.hh"
 
 const float_4b PI = 3.1415929;
+const float_4b RAD = 57.2957795;
 
 float_4b angleNormalize(const float_4b angle) {
 	float_4b result = fmod((angle + PI), (2 * PI));
@@ -31,6 +32,10 @@ float_4b angleNormalize(const float_4b angle) {
 		result += 2.0 * PI;
 	}
 	return result - PI;
+}
+
+float_4b convertDegToRad(const float_4b angle) {
+	return angle * (PI * RAD / 180);
 }
 
 #endif

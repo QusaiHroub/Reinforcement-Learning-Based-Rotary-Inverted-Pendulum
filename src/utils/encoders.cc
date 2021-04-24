@@ -64,10 +64,10 @@ void MotorEncoder::ISR() {
   }
 }
 
-float_4b MotorEncoder::getAngle () {
+float_32b MotorEncoder::getAngle () {
 	return internal.encoder * 360.0 / NUMBER_OF_FULL_ROTATE_PULSES;
 }
 
-float_4b MotorEncoder::getVelocity () {
+float_32b MotorEncoder::getVelocity () {
 	return velocity;
 }

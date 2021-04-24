@@ -22,7 +22,7 @@
 #include "type.hh"
 
 class MotorEncoder {
-	const float_4b NUMBER_OF_FULL_ROTATE_PULSES = 540.0;
+	const float_32b NUMBER_OF_FULL_ROTATE_PULSES = 540.0;
 
 	const int_8b mWireA;
 	const int_8b mWireB;
@@ -39,12 +39,12 @@ class MotorEncoder {
 	} internal;
 
 	int_8b t = 0;
-	float_4b angle_post, angle_previous, velocity;
+	float_32b angle_post, angle_previous, velocity;
 
 public:
 	MotorEncoder(int_8b, int_8b);
-	float_4b getAngle();
-	float_4b getVelocity();
+	float_32b getAngle();
+	float_32b getVelocity();
 	void ISR();
 };
 

@@ -23,18 +23,18 @@
 
 #include "type.hh"
 
-const float_4b PI = 3.1415929;
-const float_4b RAD = 57.2957795;
+const float_32b PI = 3.1415929;
+const float_32b RAD = 57.2957795;
 
-float_4b angleNormalize(const float_4b angle) {
-	float_4b result = fmod((angle + PI), (2 * PI));
+float_32b angleNormalize(const float_32b angle) {
+	float_32b result = fmod((angle + PI), (2 * PI));
 	if (result < 0.0) {
 		result += 2.0 * PI;
 	}
 	return result - PI;
 }
 
-float_4b convertDegToRad(const float_4b angle) {
+float_32b convertDegToRad(const float_32b angle) {
 	return angle * (PI * RAD / 180);
 }
 

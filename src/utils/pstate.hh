@@ -24,34 +24,34 @@
 
 class PState {
 	struct Box {
-		virtual void setValue (const float_4b value) = 0;
-		virtual float_4b getValue () const = 0;
-		Box &operator= (const float_4b value) {
+		virtual void setValue (const float_32b value) = 0;
+		virtual float_32b getValue () const = 0;
+		Box &operator= (const float_32b value) {
 			setValue (value);
 			return *this;
 		}
 	};
 
 	class Angle: public Box {
-		float_4b mValue;
+		float_32b mValue;
 	public:
-		void setValue (const float_4b value) {
+		void setValue (const float_32b value) {
 			mValue = angleNormalize (value);
 		}
 
-		float_4b getValue() const {
+		float_32b getValue() const {
 			return mValue;
 		}
 	};
 
 	class Velocity: public Box {
-		float_4b mValue;
+		float_32b mValue;
 	public:
-		void setValue (const float_4b value) {
+		void setValue (const float_32b value) {
 			mValue = value;
 		}
 
-		float_4b getValue() const {
+		float_32b getValue() const {
 			return mValue;
 		}
 	};
@@ -65,8 +65,8 @@ class PState {
     Box *mStateParam[SIZE];
 
 public:
-    PState (float_4b pendulumAngle = 0.0, float_4b pendulumAngularVelocity = 0.0,
-           float_4b motorAngle = 0.0, float_4b motorAngularVelocity = 0.0) {
+    PState (float_32b pendulumAngle = 0.0, float_32b pendulumAngularVelocity = 0.0,
+           float_32b motorAngle = 0.0, float_32b motorAngularVelocity = 0.0) {
 
            mStateParam[0] = dynamic_cast <Box *> (new Angle());
            *mStateParam[0] = pendulumAngle;
@@ -83,28 +83,28 @@ public:
     }
 
     //Getters
-    float_4b getPendulumAngle () {
+    float_32b getPendulumAngle () {
         return mStateParam[0]->getValue ();
     }
-    float_4b getPendulumAngle () const {
+    float_32b getPendulumAngle () const {
         return mStateParam[0]->getValue ();
     }
-    float_4b getMotorAngle () {
+    float_32b getMotorAngle () {
         return mStateParam[2]->getValue ();
     }
-    float_4b getMotorAngle () const {
+    float_32b getMotorAngle () const {
         return mStateParam[2]->getValue ();
     }
-    float_4b getPendulumAngularVelocity () {
+    float_32b getPendulumAngularVelocity () {
         return mStateParam[1]->getValue ();
     }
-    float_4b getPendulumAngularVelocity () const {
+    float_32b getPendulumAngularVelocity () const {
         return mStateParam[1]->getValue ();
     }
-    float_4b getMotorAngularVelocity () {
+    float_32b getMotorAngularVelocity () {
         return mStateParam[3]->getValue ();
     }
-    float_4b getMotorAngularVelocity () const {
+    float_32b getMotorAngularVelocity () const {
         return mStateParam[3]->getValue ();
     }
 
@@ -118,16 +118,16 @@ public:
     }
 
     //Setters
-    void setPendulumAngle (const float_4b pendulumAngle) {
+    void setPendulumAngle (const float_32b pendulumAngle) {
         mStateParam[0]->setValue (pendulumAngle);
     }
-    void setMotorAngle (const float_4b motorAngle) {
+    void setMotorAngle (const float_32b motorAngle) {
         mStateParam[2]->setValue (motorAngle);
     }
-    void setPendulumAngularVelocity (const float_4b pendulumAngularVelocity) {
+    void setPendulumAngularVelocity (const float_32b pendulumAngularVelocity) {
         mStateParam[1]->setValue (pendulumAngularVelocity);
     }
-    void setMotorAngularVelocity (const float_4b motorAngularVelocity) {
+    void setMotorAngularVelocity (const float_32b motorAngularVelocity) {
         mStateParam[3]->setValue (motorAngularVelocity);
     }
 
@@ -195,12 +195,12 @@ public:
      * set At - interface to setters
      *
      * @tparam index is of the {const unsigned short} type
-     * @tparam float_4b is of the {float_4b} type
+     * @tparam float_32b is of the {float_32b} type
      * @param index - the index of the value you want to set/reblace
      * @param value - the new value to be set
      *
      */
-    void setAt(const size_16b index, float_4b value) {
+    void setAt(const size_16b index, float_32b value) {
         *mStateParam[index] = value;
     }
 };

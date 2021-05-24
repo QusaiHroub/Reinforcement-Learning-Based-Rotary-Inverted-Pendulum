@@ -16,27 +16,12 @@
  * more details.
  */
 
-module;
+#include "math.hh"
 
-#include <cmath>
-
-export module math;
-
-export const double PI = 3.141592865358979;
-
- /**
- * angle normalize
- *
- * @tparam angle is double
- * @param angle - angle to normalize
- *
- * @return double - normalized angle
- */
-export double angleNormalize(const double angle) {
-    double result = fmod((angle + PI), (2 * PI));
-    if (result < 0.0) {
-        result += 2.0 * PI;
-    }
-    return (result - PI);
+double angleNormalize(const double angle) {
+  double result = fmod((angle + PI), (2 * PI));
+  if (result < 0.0) {
+      result += 2.0 * PI;
+  }
+  return (result - PI);
 }
-   

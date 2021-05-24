@@ -1,4 +1,4 @@
-/* python-interface/utils/math.cc
+/* util/math.hh
  *
  * This file is part of Reinforcement Learning-based Rotary Inverted Pendulum
  * Graduation Project.
@@ -16,11 +16,25 @@
  * more details.
  */
 
-#include "../../utils/math.hh"
+#ifndef MATH
+#define MATH
 
-extern "C" {
-    double angle_normalize (double angle) {
-        return angleNormalize(angle);
-    }
+#include <cmath>
+
+const double PI = 3.141592865358979;
+
+ /**
+ * angle normalize
+ *
+ * @tparam angle is double
+ * @param angle - angle to normalize
+ *
+ * @return double - normalized angle
+ */
+double angleNormalize(const double angle);
+
+template<typename T> T max(T a, T b) { 
+  return (a > b)? a : b;
 }
 
+#endif

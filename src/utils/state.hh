@@ -1,4 +1,4 @@
-/* util/sstate.cc
+/* util/sstate.hh
  *
  * This file is part of Reinforcement Learning-based Rotary Inverted Pendulum
  * Graduation Project.
@@ -15,14 +15,13 @@
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
  * more details.
  */
+#ifndef STATE
+#define STATE
 
-module;
+#include "math.hh"
+#include "type.hh"
 
-import math;
-
-export module state;
-
-export class State {
+class State {
 private:
     static const unsigned short SIZE = 4;
 
@@ -31,15 +30,15 @@ private:
     //1 - pendulum angular velocity
     //2 - motor angle
     //3 - motor angular velocity
-    double mStateParam[SIZE];
+    int_8b mStateParam[SIZE];
 
-    void (State::*const setters[SIZE]) (const double);
+    void (State::*const setters[SIZE]) (const int_8b);
 
 public:
-    State (double pendulumAngle = 0.0, double pendulumAngularVelocity = 0.0,
-           double motorAngle = 0.0, double motorAngularVelocity = 0.0)
-            : mStateParam{angleNormalize(pendulumAngle),
-                          angleNormalize(motorAngle), pendulumAngularVelocity,
+    State (int_8b pendulumAngle = 0, int_8b pendulumAngularVelocity = 0,
+           int_8b motorAngle = 0, int_8b motorAngularVelocity = 0)
+            : mStateParam{pendulumAngle,
+                          motorAngle, pendulumAngularVelocity,
                           motorAngularVelocity}, setters{&State::setPendulumAngle,
                           &State::setPendulumAngularVelocity, &State::setMotorAngle,
                           &State::setMotorAngularVelocity} {}
@@ -51,28 +50,28 @@ public:
     }
 
     //Getters
-    double getPendulumAngle () {
+    int_8b getPendulumAngle () {
         return mStateParam[0];
     }
-    double getPendulumAngle () const {
+    int_8b getPendulumAngle () const {
         return mStateParam[0];
     }
-    double getMotorAngle () {
+    int_8b getMotorAngle () {
         return mStateParam[2];
     }
-    double getMotorAngle () const {
+    int_8b getMotorAngle () const {
         return mStateParam[2];
     }
-    double getPendulumAngularVelocity () {
+    int_8b getPendulumAngularVelocity () {
         return mStateParam[1];
     }
-    double getPendulumAngularVelocity () const {
+    int_8b getPendulumAngularVelocity () const {
         return mStateParam[1];
     }
-    double getMotorAngularVelocity () {
+    int_8b getMotorAngularVelocity () {
         return mStateParam[3];
     }
-    double getMotorAngularVelocity () const {
+    int_8b getMotorAngularVelocity () const {
         return mStateParam[3];
     }
 
@@ -86,16 +85,16 @@ public:
     }
 
     //Setters
-    void setPendulumAngle (const double pendulumAngle) {
-        mStateParam[0] = angleNormalize(pendulumAngle);
+    void setPendulumAngle (const int_8b pendulumAngle) {
+        mStateParam[0] = pendulumAngle;
     }
-    void setMotorAngle (const double motorAngle) {
-        mStateParam[2] = angleNormalize(motorAngle);
+    void setMotorAngle (const int_8b motorAngle) {
+        mStateParam[2] = motorAngle;
     }
-    void setPendulumAngularVelocity (const double pendulumAngularVelocity) {
+    void setPendulumAngularVelocity (const int_8b pendulumAngularVelocity) {
         mStateParam[1] = pendulumAngularVelocity;
     }
-    void setMotorAngularVelocity (const double motorAngularVelocity) {
+    void setMotorAngularVelocity (const int_8b motorAngularVelocity) {
         mStateParam[3] = motorAngularVelocity;
     }
 
@@ -109,16 +108,16 @@ public:
      * @throws Index out of range when the index is more than or equal to
      * the size
      *
-     * @return double - the value of data member at that index
+     * @return int_8b - the value of data member at that index
      */
-    double operator[] (const unsigned short index) {
+    int_8b operator[] (const unsigned short index) {
         if (index >= SIZE) {
             throw "Index out of range";
         }
 
         return *(mStateParam + index);
     }
-    const double operator[] (const unsigned short index) const {
+    const int_8b operator[] (const unsigned short index) const {
         if (index >= SIZE) {
             throw "Index out of range";
         }
@@ -163,12 +162,14 @@ public:
      * set At - interface to setters
      *
      * @tparam index is of the {const unsigned short} type
-     * @tparam double is of the {double} type
+     * @tparam value is of the {int_8b} type
      * @param index - the index of the value you want to set/reblace
      * @param value - the new value to be set
      *
      */
-    void setAt(const unsigned short index, double value) {
+    void setAt(const unsigned short index, int_8b value) {
         ((*this).*setters[index])(value);
     }
 };
+
+#endif

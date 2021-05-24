@@ -1,4 +1,4 @@
-/* python-interface/utils/math.cc
+/* util/q_table.hh
  *
  * This file is part of Reinforcement Learning-based Rotary Inverted Pendulum
  * Graduation Project.
@@ -16,11 +16,26 @@
  * more details.
  */
 
-#include "../../utils/math.hh"
+#ifndef Q_TABLE
+#define Q_TABLE
 
-extern "C" {
-    double angle_normalize (double angle) {
-        return angleNormalize(angle);
-    }
-}
+#include "q_table_type.hh"
 
+#include "state.hh"
+
+class QTable {
+
+  L3STType *mQTable = nullptr;
+  const uint_8b NUMBER_OF_LEVELS = 4;
+
+  public:
+  const float_4b NULL_VALUE = 1e9;
+
+  QTable();
+  ~QTable();
+
+  float_4b get(State &state, int_8b action);
+  void set(State &state, int_8b action, float_4b qValue);
+};
+
+#endif

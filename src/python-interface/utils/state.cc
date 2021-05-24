@@ -16,11 +16,12 @@
  * more details.
  */
 
-import state;
+#include "../../utils/state.hh"
+#include "../../utils/type.hh"
 
 extern "C" {
-    State* State_new(double pendulumAngle, double motorAngle,
-           double pendulumAngularVelocity, double motorAngularVelocity) {
+    State* State_new(int pendulumAngle, int motorAngle,
+           int pendulumAngularVelocity, int motorAngularVelocity) {
         return new State(pendulumAngle, pendulumAngularVelocity, motorAngle,
                          motorAngularVelocity);
     }
@@ -28,11 +29,11 @@ extern "C" {
         delete self;
     }
 
-    double State_get_at(State* self, int index) {
+    int State_get_at(State* self, int index) {
         return (*self)[index];
     }
 
-    void State_set_at(State* self, int index, double value) {
+    void State_set_at(State* self, int index, int value) {
         (*self).setAt(index, value);
     }
 
@@ -49,33 +50,32 @@ extern "C" {
     }
 
     //State getters
-    double State_get_pendulum_angle (State* self) {
+    int State_get_pendulum_angle (State* self) {
         return self->getPendulumAngle();
     }
-    double State_get_motor_angle (State* self) {
+    int State_get_motor_angle (State* self) {
         return self->getMotorAngle();
     }
-    double State_get_pendulum_angular_velocity (State* self) {
+    int State_get_pendulum_angular_velocity (State* self) {
         return self->getPendulumAngularVelocity();
     }
-    double State_get_motor_angular_velocity (State* self) {
+    int State_get_motor_angular_velocity (State* self) {
         return self->getMotorAngularVelocity();
     }
 
     //State setters
-    void State_set_pendulum_angle (State* self, double pendulum_angle) {
+    void State_set_pendulum_angle (State* self, int pendulum_angle) {
         self->setPendulumAngle(pendulum_angle);
     }
-    void State_set_motor_angle (State* self, double motor_angle) {
+    void State_set_motor_angle (State* self, int motor_angle) {
         self->setMotorAngle(motor_angle);
     }
     void State_set_pendulum_angular_velocity (State* self,
-        double pendulum_angular_velocity) {
+        int pendulum_angular_velocity) {
         self->setPendulumAngularVelocity(pendulum_angular_velocity);
     }
     void State_set_motor_angular_velocity (State* self,
-        double motor_angular_velocity) {
+        int motor_angular_velocity) {
         self->setMotorAngularVelocity(motor_angular_velocity);
     }
 }
-

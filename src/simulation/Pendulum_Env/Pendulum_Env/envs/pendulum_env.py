@@ -190,4 +190,6 @@ class PendulumEnv(gym.Env):
 
 
     def getCurrentState(self):
+        if self.lenOfTimeSeries == 1:
+            return np.reshape(self.state, (lenOfTimeSeries, 4, 1))
         return np.array(self.state)

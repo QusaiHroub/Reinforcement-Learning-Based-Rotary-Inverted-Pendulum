@@ -38,6 +38,7 @@ cp "./src/python-interface/utils/ustate.py" "./simulator/utils/ustate.py"
 cp "./src/python-interface/utils/__init__.py" "./simulator/utils/__init__.py"
 cp "./src/simulation/pendulum_env.py" "./simulator/pendulum_env.py"
 cp "./src/simulation/main.py" "./simulator/main.py"
+cp "./src/simulation/dqlearn.py" "./simulator/dqlearn.py"
 
 
 ### cleanup ##

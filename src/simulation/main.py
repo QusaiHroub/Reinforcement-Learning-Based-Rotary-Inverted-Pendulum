@@ -18,6 +18,7 @@
 
 
 from dqlearn import run_qdlearn
+from qlearn_driver import run_qlearn
 
 
 import numpy as np
@@ -28,6 +29,7 @@ def main():
     arg = sys.argv[1]
     if arg == '--qlearn':
         print("qlearn")
+        run_qlearn()
     elif arg == '--deepqlearn':
         print('deepqlearn')
         run_qdlearn(False)

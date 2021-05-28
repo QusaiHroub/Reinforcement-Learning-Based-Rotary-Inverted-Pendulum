@@ -176,7 +176,7 @@ def collect_data(env, policy, buffer, steps):
         collect_step(env, policy, buffer)
 
 
-def train (agent,train_env, eval_env, replay_buffer):
+def train (agent,train_env, eval_env, replay_buffer, iterator):
     agent.train_step_counter.assign(0)
 
     avg_return = compute_avg_return(eval_env, agent.policy, num_eval_episodes)
@@ -239,10 +239,18 @@ def run_dqlearn (is_cc):
         data_spec=agent.collect_data_spec,
         batch_size=train_env.batch_size,
         max_length=replay_buffer_max_length)
-
+    print('collect_data')
     collect_data(train_env, random_policy, replay_buffer, initial_collect_steps)
+    print('collect_data done')
 
-    train(agent, train_env, eval_env, replay_buffer)
+    dataset = replay_buffer.as_dataset(
+        num_parallel_calls=3,
+        sample_batch_size=batch_size,
+        num_steps=2).prefetch(3)
+
+    iterator = iter(dataset)
+
+    train(agent, train_env, eval_env, replay_buffer, iterator)
 
 
 

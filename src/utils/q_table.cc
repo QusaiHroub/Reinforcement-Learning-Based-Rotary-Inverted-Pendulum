@@ -61,31 +61,31 @@ float_4b QTable::get(State &state, int_8b action) {
 void QTable::set(State &state, int_8b action, float_4b qValue) {
   L3SNType *l3SNode = mQTable->getNode(state[0]);
   if (!l3SNode) {
-    l3SNode = mQTable->inseart(state[0]);
+    l3SNode = mQTable->insert(state[0]);
   }
   L2STType *l2STType = l3SNode->getChaildTree();
 
   L2SNType *l2SNType = l2STType->getNode(state[1]);
   if (!l2SNType) {
-    l2SNType = l2STType->inseart(state[1]);
+    l2SNType = l2STType->insert(state[1]);
   }
   L1STType *l1STType = l2SNType->getChaildTree();
 
   L1SNType *l1SNType = l1STType->getNode(state[2]);
   if (!l1SNType) {
-    l1SNType = l1STType->inseart(state[2]);
+    l1SNType = l1STType->insert(state[2]);
   }
   L0STType *l0STType = l1SNType->getChaildTree();
 
   L0SNType *l0SNType = l0STType->getNode(state[3]);
   if (!l0SNType) {
-    l0SNType = l0STType->inseart(state[3]);
+    l0SNType = l0STType->insert(state[3]);
   }
   ATType *aTType = l0SNType->getChaildTree();
 
   ANType *aNType = aTType->getNodeByAction(action);
   if (!aNType) {
-    aTType->inseart(qValue, action);
+    aTType->insert(qValue, action);
   } else {
     aTType->update(aNType, qValue);
   }

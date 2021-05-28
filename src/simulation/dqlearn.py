@@ -162,7 +162,9 @@ def compute_avg_return(environment, policy, num_episodes=10):
 
 def collect_step(environment, policy, buffer):
     time_step = environment.current_time_step()
+    print(time_step)
     action_step = policy.action(time_step)
+    print(action_step)
     next_time_step = environment.step(action_step.action)
     traj = trajectory.from_transition(time_step, action_step, next_time_step)
 
@@ -198,7 +200,7 @@ def train (agent,train_env, eval_env, replay_buffer):
             returns.append(avg_return)
 
 
-def run_qdlearn (is_cc):
+def run_dqlearn (is_cc):
     train_env, eval_env, action_tensor_spec = build_environments (is_cc)
     num_actions = action_tensor_spec.maximum - action_tensor_spec.minimum + 1
 

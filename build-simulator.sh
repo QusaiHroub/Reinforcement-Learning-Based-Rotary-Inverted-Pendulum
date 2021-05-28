@@ -52,4 +52,4 @@ cp "./src/simulation/qlearn_driver.py" "./simulator/qlearn_driver.py"
 
 ### cleanup ##
 rm -rf "./simulator/python-interface/"
-rm "./simulator/utils/math.o" "./simulator/utils/state.o"
+rm "./simulator/utils/math.o"

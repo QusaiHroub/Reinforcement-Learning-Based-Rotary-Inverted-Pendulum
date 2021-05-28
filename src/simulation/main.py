@@ -17,7 +17,7 @@
 """
 
 
-from dqlearn import run_qdlearn
+from dqlearn import run_dqlearn
 from qlearn_driver import run_qlearn
 
 
@@ -32,10 +32,10 @@ def main():
         run_qlearn()
     elif arg == '--deepqlearn':
         print('deepqlearn')
-        run_qdlearn(False)
+        run_dqlearn(False)
     elif arg == '--deepqlearn-cc':
         print('deepqlearn-cc')
-        run_qdlearn(True)
+        run_dqlearn(True)
 
 if __name__ == '__main__':
     main()

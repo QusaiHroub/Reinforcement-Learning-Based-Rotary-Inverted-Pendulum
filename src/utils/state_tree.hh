@@ -24,13 +24,14 @@ template<typename SNType, typename TType, typename SType> class StateTree {
   SNType *returnNode = nullptr;
 
   SNType* getNode(SNType *root, SType state);
-  SNType* inseart(SNType *root, SType state);
+  SNType* insert(SNType *root, SType state);
+  SNType* newNode(SType state);
   void clear(SNType *root);
 
   public:
   ~StateTree();
 
-  SNType* inseart(SType state);
+  SNType* insert(SType state);
   SNType* getNode(SType state);
   void clear();
 };
@@ -57,30 +58,58 @@ SNType* StateTree<SNType, TType, SType>::getNode(SNType *root, SType state) {
 }
 
 template<typename SNType, typename TType, typename SType>
-SNType* StateTree<SNType, TType, SType>::inseart(SNType *root, SType state) {
-  if (root == nullptr) {
-    root = new SNType();
-    root->setState(state);
-    root->setChaildTree(new TType());
-    root->setLeft(nullptr);
-    root->setRight(nullptr);
-    
-    returnNode = root;
-    return root;
-  }
+SNType* StateTree<SNType, TType, SType>::newNode(SType state) {
+  SNType *node = new SNType();
+  node->setState(state);
+  node->setChaildTree(new TType());
+  node->setLeft(nullptr);
+  node->setRight(nullptr);
+  node->setHeight(1);
 
-  if (state == root->getState()) {
+  return node;
+}
+
+template<typename SNType, typename TType, typename SType>
+SNType* StateTree<SNType, TType, SType>::insert(SNType *root, SType state) {
+  if (root == nullptr) {
+    root = newNode(state);
     returnNode = root;
+
     return root;
   }
 
   if (state < root->getState()) {
-    root->setLeft(inseart(root->getLeft(), state));
+    root->setLeft(insert(root->getLeft(), state));
+  } else if (state > root->getState()) {
+    root->setRight(insert(root->getRight(), state));
   } else {
-    root->setRight(inseart(root->getRight(), state));
+    returnNode = root;
+    return root;
   }
 
-  return root; 
+  root->setHeight(1 + max(height(root->getLeft()),
+                      height(root->getRight())));
+  int_16b balance = getBalance(root);
+
+  if (balance > 1 && state < root->getLeft()->getState()) {
+    return rightRotate(root);
+  }
+
+  if (balance < -1 && state > root->getRight()->getState()) {
+    return leftRotate(root);
+  }
+
+  if (balance > 1 && state > root->getLeft()->getState()) {
+      root->setLeft(leftRotate(root->getLeft()));
+      return rightRotate(root);
+  }
+
+  if (balance < -1 && state < root->getRight()->getState()) {
+      root->setRight(rightRotate(root->getRight()));
+      return leftRotate(root);
+  }
+
+  return root;
 }
 
 template<typename SNType, typename TType, typename SType>
@@ -96,8 +125,8 @@ StateTree<SNType, TType, SType>::~StateTree() {
 }
 
 template<typename SNType, typename TType, typename SType>
-SNType* StateTree<SNType, TType, SType>::inseart(SType state) {
-  mRoot = inseart(mRoot, state);
+SNType* StateTree<SNType, TType, SType>::insert(SType state) {
+  mRoot = insert(mRoot, state);
   return returnNode;
 }
 

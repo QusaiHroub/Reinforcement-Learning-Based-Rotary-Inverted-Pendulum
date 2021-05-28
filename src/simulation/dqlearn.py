@@ -28,6 +28,9 @@ import numpy as np
 import PIL.Image
 import pyvirtualdisplay
 import gym
+import os
+import io
+import IPython
 
 
 import tensorflow as tf
@@ -46,6 +49,8 @@ from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.trajectories import trajectory
 from tf_agents.specs import tensor_spec
 from tf_agents.utils import common
+from tf_agents.policies import policy_saver
+
 
 import Pendulum_Env
 
@@ -75,7 +80,11 @@ env_name = 'pendulum_env-v0' # @param {type:"string"}
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
 
-train_step_counter = tf.Variable(0)
+train_step_counter = tf.compat.v1.train.get_or_create_global_step()
+
+save_dir = './save/'
+policy_dir = os.path.join(save_dir, 'policy')
+checkpoint_dir = os.path.join(save_dir, 'checkpoint')
 
 
 Alpha = 0.02
@@ -98,7 +107,7 @@ def build_environments (is_cc):
     train_env = tf_py_environment.TFPyEnvironment(train_py_env)
     eval_env = tf_py_environment.TFPyEnvironment(eval_py_env)
 
-    return train_env, eval_env, action_tensor_spec
+    return train_env, train_py_env, eval_env, eval_py_env, action_tensor_spec
 
 
 def dense_layer (num_units):
@@ -138,6 +147,7 @@ def build_q_net (fc_layer, num_actions, fc_conv_layer=None):
     conv_layers = [conv_layer(params) for params in fc_conv_layer]
     q_net = sequential.Sequential(conv_layers + [tf.keras.layers.Flatten()] + dense_layers + [q_values_layer])
     target_q_net = q_net.copy()
+
     return q_net, target_q_net
 
 
@@ -176,17 +186,15 @@ def collect_data(env, policy, buffer, steps):
         collect_step(env, policy, buffer)
 
 
-def train (agent,train_env, eval_env, replay_buffer, iterator):
+def train (agent, iterator, collect_driver, train_checkpointer):
     agent.train_step_counter.assign(0)
-
-    avg_return = compute_avg_return(eval_env, agent.policy, num_eval_episodes)
-    returns = [avg_return]
 
     for _ in range(num_iterations):
 
-        collect_data(train_env, agent.collect_policy, replay_buffer, collect_steps_per_iteration)
+        collect_driver.run()
 
         experience, unused_info = next(iterator)
+        train_checkpointer.save(train_step_counter)
         train_loss = agent.train(experience).loss
 
         step = agent.train_step_counter.numpy()
@@ -194,38 +202,60 @@ def train (agent,train_env, eval_env, replay_buffer, iterator):
         if step % log_interval == 0:
             print('step = {0}: loss = {1}'.format(step, train_loss))
 
-        if step % eval_interval == 0:
-            avg_return = compute_avg_return(eval_env, agent.policy, num_eval_episodes)
-            print('step = {0}: Average Return = {1}'.format(step, avg_return))
-            returns.append(avg_return)
+
+def embed_gif(gif_buffer):
+    """Embeds a gif file in the notebook."""
+    tag = '<img src="data:image/gif;base64,{0}"/>'.format(base64.b64encode(gif_buffer).decode())
+    return IPython.display.HTML(tag)
 
 
-def run_dqlearn (is_cc):
-    train_env, eval_env, action_tensor_spec = build_environments (is_cc)
+def run_episodes_and_create_video(policy, eval_tf_env, eval_py_env):
+    num_episodes = 3
+    frames = []
+    for _ in range(num_episodes):
+        time_step = eval_tf_env.reset()
+        frames.append(eval_py_env.render())
+        while not time_step.is_last():
+            action_step = policy.action(time_step)
+            time_step = eval_tf_env.step(action_step.action)
+            frames.append(eval_py_env.render())
+    gif_file = io.BytesIO()
+    imageio.mimsave(gif_file, frames, format='gif', fps=60)
+    IPython.display.display(embed_gif(gif_file.getvalue()))
+
+
+def run_dqlearn (is_cc, checkpointer_restor = False, load_tf_policy = False):
+
+    train_env, train_py_env, eval_env, eval_py_env, action_tensor_spec = build_environments (is_cc)
     num_actions = action_tensor_spec.maximum - action_tensor_spec.minimum + 1
 
-    if is_cc:
-        fc_layer_params = (128)
-        fc_conv_layer_params = ((32, (10, 4, 1), (4, 4)), (64, (7, 1, 32), (4, 1)))
-        q_net, target_q_net = build_q_net (fc_conv_layer=fc_conv_layer_params,
-                                            fc_layer=fc_layer_params,
-                                            num_actions=num_actions)
+    if load_tf_policy:
+        agent = tf.compat.v2.saved_model.load(policy_dir)
+        agent.q_network.summary()
     else:
-        fc_layer_params = (4, 100, 50)
-        q_net, target_q_net = build_q_net (fc_layer=fc_layer_params, num_actions=num_actions)
+        if is_cc:
+            fc_layer_params = (128)
+            fc_conv_layer_params = ((32, (10, 4, 1), (4, 4)), (64, (7, 1, 32), (4, 1)))
+            q_net, target_q_net = build_q_net (fc_conv_layer=fc_conv_layer_params,
+                                                fc_layer=fc_layer_params,
+                                                num_actions=num_actions)
+        else:
+            fc_layer_params = (4, 100, 50)
+            q_net, target_q_net = build_q_net (fc_layer=fc_layer_params, num_actions=num_actions)
 
-    agent = dqn_agent.DqnAgent(
-        train_env.time_step_spec(),
-        train_env.action_spec(),
-        q_network=q_net,
-        target_q_network=target_q_net,
-        optimizer=optimizer,
-        td_errors_loss_fn=common.element_wise_squared_loss,
-        train_step_counter=train_step_counter,
-        gamma=Gamma,
-        epsilon_greedy=Epsilon)
+        agent = dqn_agent.DqnAgent(
+            train_env.time_step_spec(),
+            train_env.action_spec(),
+            q_network=q_net,
+            target_q_network=target_q_net,
+            optimizer=optimizer,
+            td_errors_loss_fn=common.element_wise_squared_loss,
+            train_step_counter=train_step_counter,
+            gamma=Gamma,
+            epsilon_greedy=Epsilon)
 
-    agent.initialize()
+        agent.initialize()
+        target_q_net.summary()
 
     eval_policy = agent.policy
     collect_policy = agent.collect_policy
@@ -239,9 +269,30 @@ def run_dqlearn (is_cc):
         data_spec=agent.collect_data_spec,
         batch_size=train_env.batch_size,
         max_length=replay_buffer_max_length)
-    print('collect_data')
-    collect_data(train_env, random_policy, replay_buffer, initial_collect_steps)
-    print('collect_data done')
+
+    collect_driver = dynamic_step_driver.DynamicStepDriver(
+        train_env,
+        agent.collect_policy,
+        observers=[replay_buffer.add_batch],
+        num_steps=collect_steps_per_iteration)
+
+    train_checkpointer = common.Checkpointer(
+        ckpt_dir=checkpoint_dir,
+        max_to_keep=1,
+        agent=agent,
+        policy=agent.policy,
+        replay_buffer=replay_buffer,
+        global_step=train_step_counter
+    )
+
+    if checkpointer_restor:
+        train_checkpointer.initialize_or_restore()
+
+    tf_policy_saver = policy_saver.PolicySaver(agent.policy)
+
+    train_checkpointer.save(train_step_counter)
+
+    collect_driver.run()
 
     dataset = replay_buffer.as_dataset(
         num_parallel_calls=3,
@@ -250,7 +301,10 @@ def run_dqlearn (is_cc):
 
     iterator = iter(dataset)
 
-    train(agent, train_env, eval_env, replay_buffer, iterator)
+    train(agent, iterator, collect_driver, train_checkpointer)
 
+    tf_policy_saver.save(policy_dir)
 
-
+    print ('global_step:', train_step_counter)
+    run_episodes_and_create_video(agent.policy, eval_env, eval_py_env)
+    

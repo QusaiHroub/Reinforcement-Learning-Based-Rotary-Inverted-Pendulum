@@ -24,7 +24,7 @@ template<typename ANType, typename AType, typename QType> class ActionTree {
 
   ANType* getNodeByAction(ANType *root, QType action);
   ANType* deleteNode(ANType* root, ANType* targetNode);
-  ANType* inseart(ANType *root, QType qValue, AType action);
+  ANType* insert(ANType *root, QType qValue, AType action);
   ANType* update(ANType *root, ANType *targetNode, QType qValue);
   ANType* getMaxQvalue(ANType *root);
   void clear(ANType *root);
@@ -32,9 +32,10 @@ template<typename ANType, typename AType, typename QType> class ActionTree {
   public:
   ~ActionTree();
 
-  void inseart(QType qValue, AType action);
+  void insert(QType qValue, AType action);
   void update(ANType *targetNode, QType qValue);
   ANType* getNodeByAction(AType action);
+  ANType* newNode(QType qValue, AType action);
   void clear();
 };
 
@@ -51,12 +52,11 @@ ANType* ActionTree<ANType, AType, QType>::getNodeByAction(ANType *root, QType ac
     return root;
   }
 
-  ANType *node = getNodeByAction(root->getRight(), action);
-  if (node) {
-    return node;
+  if (action < root->getAction()) {
+    return getNodeByAction(root->getLeft(), action);
   }
 
-  return getNodeByAction(root->getLeft(), action);
+  return getNodeByAction(root->getRight(), action);
 }
 
 template<typename ANType, typename AType, typename QType>
@@ -67,7 +67,7 @@ ANType* ActionTree<ANType, AType, QType>::deleteNode(ANType* root, ANType* targe
 
   if (targetNode == root) {
     root->setLeft(deleteNode(root->getLeft(), targetNode));
-  } else if (targetNode->getQValue() > root->getQValue()) { 
+  } else if (targetNode->getAction() > root->getAction()) {
     root->setRight(deleteNode(root->getRight(), targetNode));
   } else {  
       if (!root->getLeft()) {  
@@ -82,7 +82,8 @@ ANType* ActionTree<ANType, AType, QType>::deleteNode(ANType* root, ANType* targe
 
       ANType* temp = minValueNode(root->getRight());
 
-      root->setQValue(temp->getQValue());  
+      root->setQValue(temp->getQValue());
+      root->setAction(temp->getAction());
 
       root->setRight(deleteNode(root->getRight(), temp));  
   }  
@@ -90,21 +91,26 @@ ANType* ActionTree<ANType, AType, QType>::deleteNode(ANType* root, ANType* targe
 }  
 
 template<typename ANType, typename AType, typename QType>
-ANType* ActionTree<ANType, AType, QType>::inseart(ANType *root, QType qValue, AType action) {
+ANType* ActionTree<ANType, AType, QType>::newNode(QType qValue, AType action) {
+  ANType *node = new ANType();
+  node->setQValue(qValue);
+  node->setAction(action);
+  node->setLeft(nullptr);
+  node->setRight(nullptr);
+
+  return node;
+}
+
+template<typename ANType, typename AType, typename QType>
+ANType* ActionTree<ANType, AType, QType>::insert(ANType *root, QType qValue, AType action) {
   if (root == nullptr) {
-    root = new ANType();
-    root->setQValue(qValue);
-    root->setAction(action);
-    root->setLeft(nullptr);
-    root->setRight(nullptr);
-    
-    return root;
+    return newNode(qValue, action);
   }
 
-  if (qValue < root->getQValue()) {
-    root->setLeft(inseart(root->getLeft(), qValue, action));
-  } else {
-    root->setRight(inseart(root->getRight(), qValue, action));
+  if (action < root->getAction()) {
+    root->setLeft(insert(root->getLeft(), qValue, action));
+  } else if (action > root->getAction()) {
+    root->setRight(insert(root->getRight(), qValue, action));
   }
 
   return root;    
@@ -116,22 +122,40 @@ ANType* ActionTree<ANType, AType, QType>::update(ANType *root, ANType *targetNod
 
   root = deleteNode(root, targetNode);  
 
-  root = inseart(root, qValue, action);  
+  root = insert(root, qValue, action);
 
   return root;
 }  
 
 template<typename ANType, typename AType, typename QType>
 ANType* ActionTree<ANType, AType, QType>::getMaxQvalue(ANType *root) {
-  if (!root->getRight()) {
-    return root;
+  if (root == nullptr) {
+    return nullptr;
   }
 
-  return getMaxQvalue(root->getRight());
+  ANType *left = getMaxQvalue(root->getRight());
+
+  ANType *right = getMaxQvalue(root->getRight());
+
+  if (left == nullptr) {
+    return right;
+  }
+
+  if (right == nullptr) {
+    return left;
+  }
+
+  return left->getQValue() > right->getQValue() ? left : right;
 }
 
 template<typename ANType, typename AType, typename QType>
 void ActionTree<ANType, AType, QType>::clear(ANType *root) {
+  if (root == nullptr) {
+    return;
+  }
+  clear(root->getLeft());
+  clear(root->getRight());
+
   delete root;
   root = nullptr;
 }
@@ -142,8 +166,8 @@ ActionTree<ANType, AType, QType>::~ActionTree() {
 }
 
 template<typename ANType, typename AType, typename QType>
-void ActionTree<ANType, AType, QType>::inseart(QType qValue, AType action) {
-  mRoot = inseart(mRoot, qValue, action);
+void ActionTree<ANType, AType, QType>::insert(QType qValue, AType action) {
+  mRoot = insert(mRoot, qValue, action);
 }
 
 template<typename ANType, typename AType, typename QType>

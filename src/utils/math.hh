@@ -40,4 +40,8 @@ float_32b convertDegToRad(const float_32b angle) {
 	return angle * (PI * RAD / 180);
 }
 
+template<typename T> T max(T a, T b) { 
+  return (a > b) ? a : b;
+}
+
 #endif

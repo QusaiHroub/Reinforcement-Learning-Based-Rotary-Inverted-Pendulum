@@ -40,15 +40,6 @@ template<typename AType, typename QType> class ActionNode {
 
   public: 
   ~ActionNode() {
-    if (mLeft) {
-      delete mLeft;
-      mLeft = nullptr;
-    }
-    
-    if (mRight) {
-      delete mRight;
-      mRight = nullptr; 
-    }
   }
 
   void setAction(AType action) {

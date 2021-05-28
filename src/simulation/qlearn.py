@@ -31,6 +31,7 @@ class QLearn:
         self.count = 0
         self.icount = 0
 
+
     def getQ(self, state, action, default=None):
         """get q-value
 
@@ -50,12 +51,13 @@ class QLearn:
             A list of q-values for a specific action at spectific state
         """
 
-        result = self.qtable.get(state, int(action * 100))
+        result = self.qtable.get(state, int(action))
 
-        if (result == 1e9):
+        if (abs(result - 1e9) < 0.0001):
             return default
 
         return result
+
 
     def getQListForState(self, state):
         """get list of q-values
@@ -74,6 +76,7 @@ class QLearn:
 
         return [self.getQ(state, action, 0.0) for action in self.actions]
 
+
     def learnQ(self, state, action, reward, dfreward):
         """calculat the new q-value.
 
@@ -91,14 +94,17 @@ class QLearn:
         """
 
         print (str(state))
-        oldq = self.getQ(state, int(action * 100))
+        oldq = self.getQ(state, int(action))
         print(oldq)
         if oldq is None:
+            print('insert')
             self.icount += 1
-            self.qtable.set(state, int(action * 100), reward)
+            self.qtable.set(state, int(action), reward)
         else:
+            print('update')
             self.count += 1
-            self.qtable.set(state, int(action * 100), oldq + self.alpha * (dfreward - oldq))
+            self.qtable.set(state, int(action), oldq + self.alpha * (dfreward - oldq))
+
 
     def policyFunction(self, state):
         """epsilon-greedy policy
@@ -122,6 +128,7 @@ class QLearn:
         maxQ = max(qlist)
 
         return qlist, maxQ
+
 
     def chooseAction(self, state):
         """choose an action to be performed.
@@ -151,6 +158,7 @@ class QLearn:
         selectedIter = random.choice(maxQsIters)
 
         return selectedIter
+
 
     def learn(self, state, action, reward, fState):
         """learn.

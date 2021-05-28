@@ -51,10 +51,10 @@ template<typename T> T *leftRotate(T *x) {
     y->setLeft(x); 
     x->setRight(T2); 
  
-    y->setHeight(max(height(y->getLeft()),
-                    height(y->getRight())) + 1); 
     x->setHeight(max(height(x->getLeft()),
-                    height(x->getRight())) + 1);  
+                    height(x->getRight())) + 1);
+    y->setHeight(max(height(y->getLeft()),
+                    height(y->getRight())) + 1);
  
     return y; 
 } 
@@ -70,7 +70,7 @@ template<typename AType, typename QType> ActionNode<AType, QType>*
 minValueNode(ActionNode<AType, QType> *node) {  
   ActionNode<AType, QType> *current = node;  
   
-  while (current->getLeft()) {
+  while (current->getLeft() != nullptr) {
     current = current->getLeft();
   }
 

@@ -34,7 +34,7 @@ const double PI = 3.141592865358979;
 double angleNormalize(const double angle);
 
 template<typename T> T max(T a, T b) { 
-  return (a > b)? a : b;
+  return (a > b) ? a : b;
 }
 
 #endif

@@ -1,4 +1,4 @@
-/* main_window.hh
+/* manager.hh
  *
  * This file is part of Reinforcement Learning-based Rotary Inverted Pendulum
  * Graduation Project.
@@ -16,34 +16,18 @@
  * more details.
  */
 
-#ifndef MAIN_WINDOW_HH
-#define MAIN_WINDOW_HH
+#ifndef MANAGER_HH
+#define MANAGER_HH
 
-#include <gtkmm.h>
-#include <string>
+#include "main_window.hh"
+#include "pendulum.hh"
 
-class MainWindow : public Gtk::Window {
+class Manager {
+	std::unique_ptr<MainWindow> *mMainWindow;
+	Pendulum pendulum;
+
 public:
-	MainWindow();
-
-	Gtk::Button* getRunButton();
-	Gtk::Button* getStopButton();
-	Gtk::Label** getStateLabels();
-
-private:
-	std::string titles[4] = {"Pendulum angle",
-							 "Pendulum angular velocity",
-							 "Motor angle",
-							 "Motor angular velocity"};
-	Gtk::HeaderBar *headerbar;
-	Gtk::Grid *stateGrid;
-	Gtk::Label *stateTitles[4];
-	Gtk::Label *stateValues[4];
-	Gtk::VBox *root;
-	Gtk::Label *stateLabel;
-	Gtk::ButtonBox *controls;
-	Gtk::Button *run;
-	Gtk::Button *stop;
+	Manager(std::unique_ptr<MainWindow> *);
 };
 
 #endif

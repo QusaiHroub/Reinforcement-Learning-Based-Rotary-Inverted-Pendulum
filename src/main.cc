@@ -19,10 +19,11 @@
 #include <memory>
 
 #include "main_window.hh"
+#include "manager.hh"
+
+static std::unique_ptr<MainWindow> window;
 
 static void on_activate (Glib::RefPtr<Gtk::Application> app) {
-    static std::unique_ptr<Gtk::Window> window;
-
     if (!window) {
 		window = std::make_unique<MainWindow>();
 		window->property_application() = app;
@@ -44,6 +45,8 @@ int main (int argc, char *argv[]) {
 	app->signal_activate().connect(sigc::bind(&on_activate, app));
 
 	ret = app->run(argc, argv);
+
+	Manager m(&window);
 
 	return ret;
 }

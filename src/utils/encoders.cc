@@ -23,6 +23,9 @@
 int_64b MotorEncoder::Internal::encoder = 0;
 int_32b MotorEncoder::Internal::stateA = 0,
 	MotorEncoder::Internal::stateB = 0;
+const int_8b *MotorEncoder::Internal::mWireA;
+const int_8b *MotorEncoder::Internal::mWireB;
+
 int_8b MotorEncoder::*mWireA;
 int_8b MotorEncoder::*mWireB;
 

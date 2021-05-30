@@ -28,11 +28,13 @@ class QThread {
 	atomic<bool> active{true};
 
     public:
-        void start(auto);
+    	template<typename T>
+        void start(T);
         void stop();
 };
 
-void QThread::start(auto function) {
+template<typename T>
+void QThread::start(T function) {
 	active = true;
 	thread t([=]() {
 		while(active.load()) {

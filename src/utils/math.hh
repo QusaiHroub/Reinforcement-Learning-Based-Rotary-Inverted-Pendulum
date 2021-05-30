@@ -19,6 +19,8 @@
 #ifndef MATH_HH
 #define MATH_HH
 
+#pragma once
+
 #include <cmath>
 
 #include "type.hh"

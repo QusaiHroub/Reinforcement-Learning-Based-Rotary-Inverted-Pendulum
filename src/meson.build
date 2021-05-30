@@ -1,8 +1,6 @@
 RIP_RLB_sources = [
   'main.cc',
   'main_window.cc',
-  'pendulum.cc',
-  'manager.cc',
 ]
 
 subdir('utils')

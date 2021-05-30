@@ -19,6 +19,8 @@
 #ifndef PENDULUM_HH
 #define PENDULUM_HH
 
+#pragma once
+
 #include "utils/motor.hh"
 #include "utils/pins.hh"
 #include "utils/type.hh"
@@ -44,5 +46,34 @@ public:
 	void stopMotor();
 	PState getState();
 };
+
+Pendulum::Pendulum () {
+	mMotorVelocityTimer.start([&]() {
+		M_MOTOR_ENCODER->ISR();
+	});
+
+	mUpdateStateThread.start([&]() {
+   		mState.setMotorAngle (convertDegToRad (M_MOTOR_ENCODER->getAngle ()));
+    	mState.setMotorAngularVelocity (convertDegToRad (
+    		M_MOTOR_ENCODER->getVelocity ()));
+	});
+}
+
+Pendulum::~Pendulum () {
+	delete M_MOTOR;
+ 	delete M_MOTOR_ENCODER;
+}
+
+void Pendulum::updateMotorPWM (const int_16b newValue) {
+ 	M_MOTOR->act (newValue);
+}
+
+void Pendulum::stopMotor () {
+ 	M_MOTOR->act (0);
+}
+
+PState Pendulum::getState () {
+ 	return PState(mState);
+}
 
 #endif

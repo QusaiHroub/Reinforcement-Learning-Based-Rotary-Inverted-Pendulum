@@ -19,6 +19,8 @@
 #ifndef MANAGER_HH
 #define MANAGER_HH
 
+#pragma once
+
 #include "main_window.hh"
 #include "pendulum.hh"
 
@@ -29,5 +31,9 @@ class Manager {
 public:
 	Manager(std::unique_ptr<MainWindow> *);
 };
+
+Manager::Manager(std::unique_ptr<MainWindow> *mainWindow) : mMainWindow (mainWindow) {
+
+}
 
 #endif

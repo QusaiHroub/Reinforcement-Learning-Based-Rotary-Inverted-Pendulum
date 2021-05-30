@@ -60,3 +60,16 @@ MainWindow::MainWindow()
 	add(*root);
 	show_all_children();
 }
+
+Gtk::Button* MainWindow::getRunButton() {
+	return run;
+}
+
+
+Gtk::Button* MainWindow::getStopButton() {
+	return stop;
+}
+
+Gtk::Label** MainWindow::getStateLabels() {
+	return stateValues;
+}

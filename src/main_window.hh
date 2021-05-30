@@ -23,6 +23,10 @@ class MainWindow : public Gtk::Window {
 public:
 	MainWindow();
 
+	Gtk::Button* getRunButton();
+	Gtk::Button* getStopButton();
+	Gtk::Label** getStateLabels();
+
 private:
 	std::string titles[4] = {"Pendulum angle",
 							 "Pendulum angular velocity",

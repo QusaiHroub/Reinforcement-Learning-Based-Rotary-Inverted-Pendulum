@@ -16,15 +16,25 @@
  * more details.
  */
 
-#include <gtkmm/builder.h>
-#include <gtkmm/headerbar.h>
-#include <gtkmm/label.h>
-#include <gtkmm/window.h>
+#include <gtkmm.h>
+#include <string>
 
 class MainWindow : public Gtk::Window {
 public:
 	MainWindow();
 
 private:
+	std::string titles[4] = {"Pendulum angle",
+							 "Pendulum angular velocity",
+							 "Motor angle",
+							 "Motor angular velocity"};
 	Gtk::HeaderBar *headerbar;
+	Gtk::Grid *stateGrid;
+	Gtk::Label *stateTitles[4];
+	Gtk::Label *stateValues[4];
+	Gtk::VBox *root;
+	Gtk::Label *stateLabel;
+	Gtk::ButtonBox *controls;
+	Gtk::Button *run;
+	Gtk::Button *stop;
 };

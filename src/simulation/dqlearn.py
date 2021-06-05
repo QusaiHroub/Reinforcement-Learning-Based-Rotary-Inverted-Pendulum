@@ -31,6 +31,7 @@ import gym
 import os
 import io
 import IPython
+import progressbar
 
 
 import tensorflow as tf
@@ -66,10 +67,11 @@ collect_steps_per_iteration = 1  # @param {type:"integer"}
 replay_buffer_max_length = 100000  # @param {type:"integer"}
 
 
-batch_size = 64  # @param {type:"integer"}
+batch_size = 256  # @param {type:"integer"}
 learning_rate = 1e-3  # @param {type:"number"}
 log_interval = 200  # @param {type:"integer"}
 num_epochs = 200
+conv_to_percentage = 2
 
 
 num_eval_episodes = 10  # @param {type:"integer"}
@@ -93,6 +95,8 @@ Alpha = 0.02
 Epsilon = 0.2
 Gamma = 0.85 #0.8 to 0.99
 epsilon_discount = 0.85
+
+max_to_keep = 10
 
 
 def build_environments (is_cc):
@@ -192,13 +196,18 @@ def train (agent, iterator, collect_driver, train_checkpointer):
     agent.train_step_counter.assign(0)
 
     for _ in range(num_episodes):
+        bar = progressbar.ProgressBar(maxval=num_epochs/conv_to_percentage, widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+        bar.start()
 
-        for _ in range (num_epochs):
+        for step in range (num_epochs):
 
             collect_driver.run()
 
             experience, unused_info = next(iterator)
             train_loss = agent.train(experience).loss
+
+            if step % conv_to_percentage == 0:
+                bar.update(step / conv_to_percentage + 1)
 
         step = agent.train_step_counter.numpy()
 
@@ -281,7 +290,7 @@ def run_dqlearn (is_cc, checkpointer_restor = False, load_tf_policy = False):
 
     train_checkpointer = common.Checkpointer(
         ckpt_dir=checkpoint_dir,
-        max_to_keep=1,
+        max_to_keep=max_to_keep,
         agent=agent,
         policy=agent.policy,
         replay_buffer=replay_buffer,

@@ -80,10 +80,12 @@ class PendulumEnv(gym.Env):
         oldState = np.reshape(oldState, (4))
         result = 0.0
         #TODO
-        if np.abs(cState[2]) < np.abs(oldState[2]):
+        if (np.abs(cState[2]) <= self.alpha_threshold_radians):
             result = 100.
+        if np.abs(cState[2]) < np.abs(oldState[2]):
+            result = 40.
         else:
-            result = -5.
+            result = -10.
 
         return result
 

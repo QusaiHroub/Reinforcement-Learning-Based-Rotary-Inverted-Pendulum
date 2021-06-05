@@ -58,6 +58,7 @@ import Pendulum_Env
 """## Hyperparameters"""
 
 num_iterations = 20000 # @param {type:"integer"}
+num_episodes = 20000
 
 
 initial_collect_steps = 100  # @param {type:"integer"}
@@ -68,6 +69,7 @@ replay_buffer_max_length = 100000  # @param {type:"integer"}
 batch_size = 64  # @param {type:"integer"}
 learning_rate = 1e-3  # @param {type:"number"}
 log_interval = 200  # @param {type:"integer"}
+num_epochs = 200
 
 
 num_eval_episodes = 10  # @param {type:"integer"}
@@ -189,18 +191,18 @@ def collect_data(env, policy, buffer, steps):
 def train (agent, iterator, collect_driver, train_checkpointer):
     agent.train_step_counter.assign(0)
 
-    for _ in range(num_iterations):
+    for _ in range(num_episodes):
 
-        collect_driver.run()
+        for _ in range (num_epochs):
 
-        experience, unused_info = next(iterator)
-        train_checkpointer.save(train_step_counter)
-        train_loss = agent.train(experience).loss
+            collect_driver.run()
+
+            experience, unused_info = next(iterator)
+            train_loss = agent.train(experience).loss
 
         step = agent.train_step_counter.numpy()
 
-        if step % log_interval == 0:
-            print('step = {0}: loss = {1}'.format(step, train_loss))
+        print('step = {0}: loss = {1}'.format(step, train_loss))
 
 
 def embed_gif(gif_buffer):
@@ -252,7 +254,8 @@ def run_dqlearn (is_cc, checkpointer_restor = False, load_tf_policy = False):
             td_errors_loss_fn=common.element_wise_squared_loss,
             train_step_counter=train_step_counter,
             gamma=Gamma,
-            epsilon_greedy=Epsilon)
+            epsilon_greedy=Epsilon,
+            target_update_period=num_epochs)
 
         agent.initialize()
         target_q_net.summary()

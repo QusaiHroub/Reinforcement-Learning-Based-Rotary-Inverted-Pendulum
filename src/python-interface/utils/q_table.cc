@@ -18,22 +18,22 @@
 
 #include "../../utils/type.hh"
 #include "../../utils/q_table.hh"
-#include "../../utils/state.hh"
+#include "../../utils/pstate.hh"
 
 extern "C" {
   QTable* QTable_new() {
       return new QTable();
   }
 
-  void QTable_del(State* self) {
+  void QTable_del(QTable* self) {
       delete self;
   }
 
-  float_32b get(QTable *self, State *state, int action) {
+  float_32b get(QTable *self, PState *state, int action) {
     return self->get(*state, action);
   }
 
-  void set(QTable *self, State *state, int action, float_32b qValue) {
+  void set(QTable *self, PState *state, int action, float_32b qValue) {
     self->set(*state, action, qValue);
   }
 }

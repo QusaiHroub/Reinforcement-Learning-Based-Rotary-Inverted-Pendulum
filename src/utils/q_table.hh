@@ -21,12 +21,13 @@
 
 #include "q_table_type.hh"
 
-#include "state.hh"
+#include "pstate.hh"
 
 class QTable {
 
   L3STType *mQTable = nullptr;
   const uint_8b NUMBER_OF_LEVELS = 4;
+  const uint_8b PRECISION = 10;
 
   public:
   const float_32b NULL_VALUE = 1e9;
@@ -34,8 +35,8 @@ class QTable {
   QTable();
   ~QTable();
 
-  float_32b get(State &state, int_8b action);
-  void set(State &state, int_8b action, float_32b qValue);
+  float_32b get(PState &state, int_8b action);
+  void set(PState &state, int_8b action, float_32b qValue);
 };
 
 #endif

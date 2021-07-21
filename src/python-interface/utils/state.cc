@@ -1,4 +1,4 @@
-/* python-interface/utils/state.cc
+/* python-interface/utils/PState.cc
  *
  * This file is part of Reinforcement Learning-based Rotary Inverted Pendulum
  * Graduation Project.
@@ -16,66 +16,66 @@
  * more details.
  */
 
-#include "../../utils/state.hh"
+#include "../../utils/pstate.hh"
 #include "../../utils/type.hh"
 
 extern "C" {
-    State* State_new(int pendulumAngle, int motorAngle,
-           int pendulumAngularVelocity, int motorAngularVelocity) {
-        return new State(pendulumAngle, pendulumAngularVelocity, motorAngle,
+    PState* State_new(float_32b pendulumAngle, float_32b motorAngle,
+           float_32b pendulumAngularVelocity, float_32b motorAngularVelocity) {
+        return new PState(pendulumAngle, pendulumAngularVelocity, motorAngle,
                          motorAngularVelocity);
     }
-    void State_del(State* self) {
+    void State_del(PState* self) {
         delete self;
     }
 
-    int State_get_at(State* self, int index) {
-        return (*self)[index];
+    float_32b State_get_at(PState* self, int index) {
+        return (*self).unBoxAt(index);
     }
 
-    void State_set_at(State* self, int index, int value) {
+    void State_set_at(PState* self, int index, float_32b value) {
         (*self).setAt(index, value);
     }
 
-    bool State_is_equal(State* self, State* state) {
-        return (*self) == (*state);
+    bool State_is_equal(PState* self, PState* PState) {
+        return (*self) == (*PState);
     }
 
-    unsigned short State_len (State* self) {
+    unsigned short State_len (PState* self) {
         return self->size();
     }
 
-    void State_copy (State* self, State* target) {
+    void State_copy (PState* self, PState* target) {
         (*self) = (*target);
     }
 
     //State getters
-    int State_get_pendulum_angle (State* self) {
+    float_32b State_get_pendulum_angle (PState* self) {
         return self->getPendulumAngle();
     }
-    int State_get_motor_angle (State* self) {
+    float_32b State_get_motor_angle (PState* self) {
         return self->getMotorAngle();
     }
-    int State_get_pendulum_angular_velocity (State* self) {
+    float_32b State_get_pendulum_angular_velocity (PState* self) {
         return self->getPendulumAngularVelocity();
     }
-    int State_get_motor_angular_velocity (State* self) {
+    float_32b State_get_motor_angular_velocity (PState* self) {
         return self->getMotorAngularVelocity();
     }
 
-    //State setters
-    void State_set_pendulum_angle (State* self, int pendulum_angle) {
+    //PState setters
+    void State_set_pendulum_angle (PState* self, float_32b pendulum_angle) {
         self->setPendulumAngle(pendulum_angle);
     }
-    void State_set_motor_angle (State* self, int motor_angle) {
+    void State_set_motor_angle (PState* self, float_32b motor_angle) {
         self->setMotorAngle(motor_angle);
     }
-    void State_set_pendulum_angular_velocity (State* self,
-        int pendulum_angular_velocity) {
+    void State_set_pendulum_angular_velocity (PState* self,
+        float_32b pendulum_angular_velocity) {
         self->setPendulumAngularVelocity(pendulum_angular_velocity);
     }
-    void State_set_motor_angular_velocity (State* self,
-        int motor_angular_velocity) {
+    void State_set_motor_angular_velocity (PState* self,
+        float_32b motor_angular_velocity) {
         self->setMotorAngularVelocity(motor_angular_velocity);
     }
 }

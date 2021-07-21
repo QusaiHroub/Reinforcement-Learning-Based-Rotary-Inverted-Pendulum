@@ -23,8 +23,8 @@ UTILITY_PATH = './utils/state.so'
 utility = cdll.LoadLibrary(UTILITY_PATH)
 
 #State methods and constructors
-utility.State_new.argtypes = [ctypes.c_int, ctypes.c_int,
-                               ctypes.c_int, ctypes.c_int]
+utility.State_new.argtypes = [ctypes.c_float, ctypes.c_float,
+                               ctypes.c_float, ctypes.c_float]
 utility.State_new.restype = ctypes.c_void_p
 utility.State_del.argtypes = [ctypes.c_void_p]
 utility.State_len.argtypes = [ctypes.c_void_p]
@@ -32,27 +32,27 @@ utility.State_len.restype = ctypes.c_int
 utility.State_is_equal.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 utility.State_is_equal.restype = ctypes.c_bool
 utility.State_get_at.argtypes = [ctypes.c_void_p, ctypes.c_int]
-utility.State_get_at.restype = ctypes.c_int
-utility.State_set_at.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_int]
+utility.State_get_at.restype = ctypes.c_float
+utility.State_set_at.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_float]
 utility.State_copy.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
 
 #State getters
 utility.State_get_pendulum_angle.argtypes = [ctypes.c_void_p]
-utility.State_get_pendulum_angle.restype = ctypes.c_int
+utility.State_get_pendulum_angle.restype = ctypes.c_float
 utility.State_get_motor_angle.argtypes = [ctypes.c_void_p]
-utility.State_get_motor_angle.restype = ctypes.c_int
+utility.State_get_motor_angle.restype = ctypes.c_float
 utility.State_get_pendulum_angular_velocity.argtypes = [ctypes.c_void_p]
-utility.State_get_pendulum_angular_velocity.restype = ctypes.c_int
+utility.State_get_pendulum_angular_velocity.restype = ctypes.c_float
 utility.State_get_motor_angular_velocity.argtypes = [ctypes.c_void_p]
-utility.State_get_motor_angular_velocity.restype = ctypes.c_int
+utility.State_get_motor_angular_velocity.restype = ctypes.c_float
 
 #State setters
-utility.State_set_pendulum_angle.argtypes = [ctypes.c_void_p, ctypes.c_int]
-utility.State_set_motor_angle.argtypes = [ctypes.c_void_p, ctypes.c_int]
+utility.State_set_pendulum_angle.argtypes = [ctypes.c_void_p, ctypes.c_float]
+utility.State_set_motor_angle.argtypes = [ctypes.c_void_p, ctypes.c_float]
 utility.State_set_pendulum_angular_velocity.argtypes = [ctypes.c_void_p,
-                                                        ctypes.c_int]
+                                                        ctypes.c_float]
 utility.State_set_motor_angular_velocity.argtypes = [ctypes.c_void_p,
-                                                     ctypes.c_int]
+                                                     ctypes.c_float]
 
 class State(object):
     def __init__ (self, pendulumAngle = 0, motorAngle = 0,

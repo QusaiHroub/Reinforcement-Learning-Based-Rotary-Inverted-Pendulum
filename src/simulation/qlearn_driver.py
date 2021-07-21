@@ -28,10 +28,13 @@ from utils.ustate import State
 def conve_state(state):
     state = np.reshape(state, (4))
     cState = State()
-    cState.set_motor_angle(int(state[0] * 10))
-    cState.set_motor_angular_velocity(int(state[1] * 10))
-    cState.set_pendulum_angle(int(state[2] * 10))
-    cState.set_pendulum_angular_velocity(int(state[3] * 10))
+    cState.set_motor_angle(state[0])
+    cState.set_motor_angular_velocity(state[1])
+    cState.set_pendulum_angle(state[2])
+    cState.set_pendulum_angular_velocity(state[3])
+
+    del state
+
     return cState
 
 
@@ -65,7 +68,6 @@ def run_qlearn():
         cumulated_reward = 0
         isDone = False
         cState = conve_state(pendulumEnv.getCurrentState())
-        print("cState", cState)
 
         if qlearn.epsilon > 0.05:
             qlearn.epsilon *= epsilon_discount
@@ -86,9 +88,7 @@ def run_qlearn():
                 highest_reward = cumulated_reward
 
             qlearn.learn(cState, action, reward, fState)
+            cState.copy(fState)
 
-            if not isDone:
-                cState.copy(fState)
-                del fState
-            else:
+            if isDone:
                 break

@@ -23,8 +23,8 @@
 #include "action_tree.hh"
 #include "state_tree.hh"
 
-template class ActionNode<int_16b, float_32b>;
-using ANType = ActionNode<int_16b, float_32b>;
+template class ActionNode<int_8b, float_32b>;
+using ANType = ActionNode<int_8b, float_32b>;
 template class ActionTree<ANType, int_16b, float_32b>;
 using ATType = ActionTree<ANType, int_16b, float_32b>;
 

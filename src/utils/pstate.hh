@@ -133,7 +133,6 @@ public:
 
     /**
      * intexing the data member of the state
-     * You can't use this operator to assign. Use setAt instead of it.
      *
      * @tparam index is of the {const unsigned short} type
      * @param index - index of the data member
@@ -186,7 +185,7 @@ public:
         }
 
         for (int i = 0; i < (*this).size(); i++) {
-            *mStateParam[i] = state[i];
+            mStateParam[i]->setValue(state.unBoxAt(i));
         }
         return *this;
     }
@@ -201,7 +200,15 @@ public:
      *
      */
     void setAt(const size_16b index, float_32b value) {
-        *mStateParam[index] = value;
+        mStateParam[index]->setValue(value);
+    }
+
+    float_32b unBoxAt(const size_16b index) {
+        return mStateParam[index]->getValue();
+    }
+
+    float_32b unBoxAt(const size_16b index) const {
+        return mStateParam[index]->getValue();
     }
 };
 

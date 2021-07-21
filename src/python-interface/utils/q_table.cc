@@ -29,11 +29,11 @@ extern "C" {
       delete self;
   }
 
-  float_4b get(QTable *self, State *state, int action) {
+  float_32b get(QTable *self, State *state, int action) {
     return self->get(*state, action);
   }
 
-  void set(QTable *self, State *state, int action, float_4b qValue) {
+  void set(QTable *self, State *state, int action, float_32b qValue) {
     self->set(*state, action, qValue);
   }
 }

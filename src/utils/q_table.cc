@@ -26,7 +26,7 @@ QTable::~QTable() {
   delete mQTable;
 }
 
-float_4b QTable::get(State &state, int_8b action) {
+float_32b QTable::get(State &state, int_8b action) {
   L3SNType *l3SNode = mQTable->getNode(state[0]);
   if (!l3SNode) {
     return NULL_VALUE;
@@ -58,7 +58,7 @@ float_4b QTable::get(State &state, int_8b action) {
   return aNType->getQValue();
 }
 
-void QTable::set(State &state, int_8b action, float_4b qValue) {
+void QTable::set(State &state, int_8b action, float_32b qValue) {
   L3SNType *l3SNode = mQTable->getNode(state[0]);
   if (!l3SNode) {
     l3SNode = mQTable->insert(state[0]);

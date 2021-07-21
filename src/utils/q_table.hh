@@ -29,13 +29,13 @@ class QTable {
   const uint_8b NUMBER_OF_LEVELS = 4;
 
   public:
-  const float_4b NULL_VALUE = 1e9;
+  const float_32b NULL_VALUE = 1e9;
 
   QTable();
   ~QTable();
 
-  float_4b get(State &state, int_8b action);
-  void set(State &state, int_8b action, float_4b qValue);
+  float_32b get(State &state, int_8b action);
+  void set(State &state, int_8b action, float_32b qValue);
 };
 
 #endif

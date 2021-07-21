@@ -28,17 +28,8 @@
 const float_32b PI = 3.1415929;
 const float_32b RAD = 57.2957795;
 
-float_32b angleNormalize(const float_32b angle) {
-	float_32b result = fmod((angle + PI), (2 * PI));
-	if (result < 0.0) {
-		result += 2.0 * PI;
-	}
-	return result - PI;
-}
-
-float_32b convertDegToRad(const float_32b angle) {
-	return angle * (PI * RAD / 180);
-}
+float_32b angleNormalize(const float_32b angle);
+float_32b convertDegToRad(const float_32b angle);
 
 template<typename T> T max(T a, T b) { 
   return (a > b) ? a : b;

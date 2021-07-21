@@ -23,26 +23,26 @@
 #include "action_tree.hh"
 #include "state_tree.hh"
 
-template class ActionNode<int_8b, float_32b>;
-using ANType = ActionNode<int_8b, float_32b>;
-template class ActionTree<ANType, int_8b, float_32b>;
-using ATType = ActionTree<ANType, int_8b, float_32b>;
+template class ActionNode<int_16b, float_32b>;
+using ANType = ActionNode<int_16b, float_32b>;
+template class ActionTree<ANType, int_16b, float_32b>;
+using ATType = ActionTree<ANType, int_16b, float_32b>;
 
-template class StateNode<ATType, int_8b>;
-using L0SNType = StateNode<ATType, int_8b>;
-template class StateTree<L0SNType, ATType, int_8b>;
-using L0STType = StateTree<L0SNType, ATType, int_8b>;
-template class StateNode<L0STType, int_8b>;
-using L1SNType = StateNode<L0STType, int_8b>;
-template class StateTree<L1SNType, L0STType, int_8b>;
-using L1STType = StateTree<L1SNType, L0STType, int_8b>;
-template class StateNode<L1STType, int_8b>;
-using L2SNType = StateNode<L1STType, int_8b>;
-template class StateTree<L2SNType, L1STType, int_8b>;
-using L2STType = StateTree<L2SNType, L1STType, int_8b>;
-template class StateNode<L2STType, int_8b>;
-using L3SNType = StateNode<L2STType, int_8b>;
-template class StateTree<L3SNType, L2STType, int_8b>;
-using L3STType = StateTree<L3SNType, L2STType, int_8b>;
+template class StateNode<ATType, int_16b>;
+using L0SNType = StateNode<ATType, int_16b>;
+template class StateTree<L0SNType, ATType, int_16b>;
+using L0STType = StateTree<L0SNType, ATType, int_16b>;
+template class StateNode<L0STType, int_16b>;
+using L1SNType = StateNode<L0STType, int_16b>;
+template class StateTree<L1SNType, L0STType, int_16b>;
+using L1STType = StateTree<L1SNType, L0STType, int_16b>;
+template class StateNode<L1STType, int_16b>;
+using L2SNType = StateNode<L1STType, int_16b>;
+template class StateTree<L2SNType, L1STType, int_16b>;
+using L2STType = StateTree<L2SNType, L1STType, int_16b>;
+template class StateNode<L2STType, int_16b>;
+using L3SNType = StateNode<L2STType, int_16b>;
+template class StateTree<L3SNType, L2STType, int_16b>;
+using L3STType = StateTree<L3SNType, L2STType, int_16b>;
 
 #endif

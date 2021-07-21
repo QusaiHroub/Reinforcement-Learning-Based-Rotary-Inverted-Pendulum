@@ -28,10 +28,10 @@ from utils.ustate import State
 def conve_state(state):
     state = np.reshape(state, (4))
     cState = State()
-    cState.set_motor_angle(int(state[0]))
-    cState.set_motor_angular_velocity(int(state[1]))
-    cState.set_pendulum_angle(int(state[2]))
-    cState.set_pendulum_angular_velocity(int(state[3]))
+    cState.set_motor_angle(int(state[0] * 10))
+    cState.set_motor_angular_velocity(int(state[1] * 10))
+    cState.set_pendulum_angle(int(state[2] * 10))
+    cState.set_pendulum_angular_velocity(int(state[3] * 10))
     return cState
 
 

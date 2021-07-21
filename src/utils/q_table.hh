@@ -1,4 +1,4 @@
-/* util/math.hh
+/* util/q_table.hh
  *
  * This file is part of Reinforcement Learning-based Rotary Inverted Pendulum
  * Graduation Project.
@@ -16,32 +16,26 @@
  * more details.
  */
 
-#ifndef MATH_HH
-#define MATH_HH
+#ifndef Q_TABLE
+#define Q_TABLE
 
-#pragma once
+#include "q_table_type.hh"
 
-#include <cmath>
+#include "state.hh"
 
-#include "type.hh"
+class QTable {
 
-const float_32b PI = 3.1415929;
-const float_32b RAD = 57.2957795;
+  L3STType *mQTable = nullptr;
+  const uint_8b NUMBER_OF_LEVELS = 4;
 
-float_32b angleNormalize(const float_32b angle) {
-	float_32b result = fmod((angle + PI), (2 * PI));
-	if (result < 0.0) {
-		result += 2.0 * PI;
-	}
-	return result - PI;
-}
+  public:
+  const float_32b NULL_VALUE = 1e9;
 
-float_32b convertDegToRad(const float_32b angle) {
-	return angle * (PI * RAD / 180);
-}
+  QTable();
+  ~QTable();
 
-template<typename T> T max(T a, T b) { 
-  return (a > b) ? a : b;
-}
+  float_32b get(State &state, int_8b action);
+  void set(State &state, int_8b action, float_32b qValue);
+};
 
 #endif

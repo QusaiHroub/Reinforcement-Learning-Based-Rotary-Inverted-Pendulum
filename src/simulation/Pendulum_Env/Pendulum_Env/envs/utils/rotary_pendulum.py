@@ -24,6 +24,22 @@ from scipy import integrate
 
 def CreateRotaryPendulum_ODE(const_args):
     def RotaryPendulum_ODE(t, X0):
+        """Rotary Pendulum ODE
+
+        Parameters
+        ----------
+
+        t: double
+            time
+        X0: array
+            current state
+
+        Returns
+        -------
+
+            [motor angle, motor angular velocity, pendulum angle, pendulum angular velocity]
+        """
+
         tau, I, m, l, Rl, g = const_args
         Y1, Y2, Y3, Y4 = X0
 

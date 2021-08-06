@@ -26,6 +26,20 @@ from utils.ustate import State
 
 
 def conve_state(state):
+    """conveart array to object of type State
+
+    Parameters
+    ----------
+
+    state: array
+        target state
+
+    Returns
+    -------
+
+         An Object of State values
+    """
+    
     state = np.reshape(state, (4))
     cState = State()
     cState.set_motor_angle(state[0])
@@ -39,6 +53,16 @@ def conve_state(state):
 
 
 def run_qlearn():
+    """run q-learn
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+    """
+
     Alpha = 0.02
     Epsilon = 0.2
     Gamma = 0.8 #0.8 to 0.99

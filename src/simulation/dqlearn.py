@@ -100,6 +100,20 @@ max_to_keep = 10
 
 
 def build_environments (is_cc):
+    """build enviornments for train and test
+
+    Parameters
+    ----------
+
+    is_cc: boolean
+        is environments target convolutional neural network or not.
+
+    Returns
+    -------
+
+         An Object of State values
+    """
+
     if is_cc:
         train_py_env = suite_gym.load(env_name)
         eval_py_env = suite_gym.load(env_name)
@@ -117,6 +131,20 @@ def build_environments (is_cc):
 
 
 def dense_layer (num_units):
+    """build dense layer
+
+    Parameters
+    ----------
+
+    num_units: number
+        number of units in the layer.
+
+    Returns
+    -------
+
+         dense layer
+    """
+
     return tf.keras.layers.Dense (
         num_units,
         activation=tf.keras.activations.relu,
@@ -125,6 +153,22 @@ def dense_layer (num_units):
 
 
 def conv_layer (param):
+    """build convolutional layer
+
+    Parameters
+    ----------
+
+    param: tuble of 3 values
+        filters: number - number of filters in the layer
+        input_shape: tuble of 3 numbers - dimensions of the input
+        kernel_size: tuble of 2 numbers - kernel dimensions
+
+    Returns
+    -------
+
+         convolutional layer
+    """
+
     filters, input_shape, kernel_size = param
     return tf.keras.layers.Conv2D (
         filters = filters,
@@ -136,6 +180,24 @@ def conv_layer (param):
 
 
 def build_q_net (fc_layer, num_actions, fc_conv_layer=None):
+    """build q neural network
+
+    Parameters
+    ----------
+
+    c_layer: tuble
+        describe dense layer
+    num_actions: number
+        number of actions - equivalent to the number neural network outputs
+    fc_conv_layer: tuble
+        describe convolutional layer
+
+    Returns
+    -------
+
+         q_net and target_q_net
+    """
+
     q_values_layer = tf.keras.layers.Dense(
         num_actions,
         activation=None,
@@ -158,6 +220,20 @@ def build_q_net (fc_layer, num_actions, fc_conv_layer=None):
 
 
 def compute_avg_return(environment, policy, num_episodes=10):
+    """compute avg return - deprecated
+
+    Parameters
+    ----------
+
+    environment: gym enironment
+    policy:
+    num_episodes: number
+
+    Returns
+    -------
+
+        reward avg
+    """
 
     total_return = 0.0
     for _ in range(num_episodes):
@@ -177,22 +253,65 @@ def compute_avg_return(environment, policy, num_episodes=10):
 
 
 def collect_step(environment, policy, buffer):
+    """collect data for step - deprecated
+
+    Parameters
+    ----------
+
+    environment: gym enironment
+    policy:
+    buffer: replay buffer
+
+    Returns
+    -------
+
+    """
+
     time_step = environment.current_time_step()
-    print(time_step)
     action_step = policy.action(time_step)
-    print(action_step)
     next_time_step = environment.step(action_step.action)
     traj = trajectory.from_transition(time_step, action_step, next_time_step)
 
     buffer.add_batch(traj)
 
 
-def collect_data(env, policy, buffer, steps):
+def collect_data(environment, policy, buffer, steps):
+    """collect data for steps - deprecated
+
+    Parameters
+    ----------
+
+    environment: gym enironment
+    policy:
+    buffer: replay buffer
+    steps:
+
+    Returns
+    -------
+
+         dense layer
+    """
+
     for _ in range(steps):
-        collect_step(env, policy, buffer)
+        collect_step(environment, policy, buffer)
 
 
 def train (agent, iterator, collect_driver, train_checkpointer):
+    """train
+
+    Parameters
+    ----------
+
+    agent:
+    iterator:
+    collect_driver:
+    train_checkpointer:
+
+    Returns
+    -------
+
+    """
+
     agent.train_step_counter.assign(0)
 
     for _ in range(num_episodes):
@@ -236,6 +355,23 @@ def run_episodes_and_create_video(policy, eval_tf_env, eval_py_env):
 
 
 def run_dqlearn (is_cc, checkpointer_restor = False, load_tf_policy = False):
+    """run deep q-learn
+
+    Parameters
+    ----------
+
+    is_cc: boolean
+        is environments target convolutional neural network or not.
+    checkpointer_restor: boolean
+        load saved check pointer restore
+    load_tf_policy: boolean
+        load saved tf policy
+
+    Returns
+    -------
+
+        save the latest checkpointer and tf_policy
+    """
 
     train_env, train_py_env, eval_env, eval_py_env, action_tensor_spec = build_environments (is_cc)
     num_actions = action_tensor_spec.maximum - action_tensor_spec.minimum + 1

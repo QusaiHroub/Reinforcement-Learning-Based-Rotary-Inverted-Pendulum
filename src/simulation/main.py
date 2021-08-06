@@ -36,6 +36,13 @@ def main():
     elif arg == '--deepqlearn-cc':
         print('deepqlearn-cc')
         run_dqlearn(True)
+    elif arg == '-h' or arg == '--help':
+        print('Usage: python3 main.py [option]\n')
+        print('List of options:')
+        print('--qlearn             run q-learn reinforcement learing ')
+        print('--deepqlearn         run deep q-learn reinforcement learning (Dense layers)')
+        print('--deepqlearn-cc      run deep q-learn reinforcement learning (Convilution layers)')
+
 
 if __name__ == '__main__':
     main()

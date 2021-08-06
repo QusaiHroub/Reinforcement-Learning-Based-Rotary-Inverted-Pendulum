@@ -114,7 +114,7 @@ class PendulumEnv(gym.Env):
         Itot = Ino_e + m_encoder * m_re ** 2
         I = Itot
         tau = self.actions[action] * self.max_torque
-        #tau = np.clip(tau, -self.max_torque, self.max_torque)[0]
+
         stateForSolver = np.reshape(state[lenOfTimeSeries - 1], (4))
         newtheta, newdtheta, newalpha, newdalpha = solveRL(stateForSolver, stepSize, I, m_rod, l, r, g, tau)
         newdtheta = np.clip(newdtheta, -self.max_speed, self.max_speed)

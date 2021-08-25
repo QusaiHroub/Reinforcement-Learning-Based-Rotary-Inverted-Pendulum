@@ -1,4 +1,4 @@
-/* util/encoders.hh
+/* util/constants.hh
  *
  * This file is part of Reinforcement Learning-based Rotary Inverted Pendulum
  * Graduation Project.
@@ -16,36 +16,12 @@
  * more details.
  */
 
-#ifndef ENCODERS_HH
-#define ENCODERS_HH
+#ifndef CONSTANTS_HH
+#define CONSTANTS_HH
 
 #include "type.hh"
 
-class Encoder {
-	const float_32b NUMBER_OF_FULL_ROTATE_PULSES;
-
-	const int_8b mWireA;
-	const int_8b mWireB;
-
-	struct Internal {
-		static int_64b encoder;
-		static int_32b stateA, stateB;
-
-		static const int_8b *mWireA;
-		static const int_8b *mWireB;
-
-		static void A();
-		static void B();
-	} internal;
-
-	int_8b t = 0;
-	float_32b angle_post, angle_previous, velocity;
-
-public:
-	Encoder(int_8b, int_8b, float_32b = 540.0);
-	float_32b getAngle();
-	float_32b getVelocity();
-	void ISR();
-};
+const float_32b MOTOR_ENCODER_CPR = 540.0;
+const float_32b PENDULUM_ENCODER_CPR = 2000.0;
 
 #endif

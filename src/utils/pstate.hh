@@ -78,7 +78,7 @@ public:
            *mStateParam[3] = motorAngularVelocity;
 	}
 
-    PState (const PState& state) {
+    PState (const PState& state) : PState() {
         (*this) = state;
     }
 

@@ -28,11 +28,13 @@
 #include "utils/encoders.hh"
 #include "utils/timer.hh"
 #include "utils/qthread.hh"
+#include "utils/constants.hh"
+
+#include <wiringPi.h>
 
 class Pendulum {
-	Motor *const M_MOTOR = new Motor(MOTOR_PIN_1, MOTOR_PIN_2, MOTOR_ENABLE_DC_1);
-	MotorEncoder *const M_MOTOR_ENCODER =
-		new MotorEncoder(MOTOR_ENCODER_WIRE_A, MOTOR_ENCODER_WIRE_B);
+	Motor *mMotor;
+	Encoder *mMotorEncoder, *mPendulumEncoder;
 
 	Timer mMotorVelocityTimer;
 	QThread mUpdateStateThread;
@@ -48,28 +50,37 @@ public:
 };
 
 Pendulum::Pendulum () {
+	wiringPiSetup();
+	mMotor = new Motor(MOTOR_PIN_1, MOTOR_PIN_2, MOTOR_ENABLE_DC_1);
+	mMotorEncoder = new Encoder(MOTOR_ENCODER_WIRE_A, MOTOR_ENCODER_WIRE_B, MOTOR_ENCODER_CPR);
+	mPendulumEncoder = new Encoder(PENDULUM_ENCODER_WIRE_A, PENDULUM_ENCODER_WIRE_B, PENDULUM_ENCODER_CPR);
+
 	mMotorVelocityTimer.start([&]() {
-		M_MOTOR_ENCODER->ISR();
+		mMotorEncoder->ISR();
+		mPendulumEncoder->ISR();
 	});
 
 	mUpdateStateThread.start([&]() {
-   		mState.setMotorAngle (convertDegToRad (M_MOTOR_ENCODER->getAngle ()));
-    	mState.setMotorAngularVelocity (convertDegToRad (
-    		M_MOTOR_ENCODER->getVelocity ()));
+   		mState.setMotorAngle (convertDegToRad (mMotorEncoder->getAngle ()));
+    		mState.setMotorAngularVelocity (convertDegToRad (
+    			mMotorEncoder->getVelocity ()));
+    		mState.setPendulumAngle (convertDegToRad (mPendulumEncoder->getAngle ()));
+    		mState.setPendulumAngularVelocity (convertDegToRad (
+    			mPendulumEncoder->getVelocity ()));
 	});
 }
 
 Pendulum::~Pendulum () {
-	delete M_MOTOR;
- 	delete M_MOTOR_ENCODER;
+	delete mMotor;
+ 	delete mMotorEncoder;
 }
 
 void Pendulum::updateMotorPWM (const int_16b newValue) {
- 	M_MOTOR->act (newValue);
+ 	mMotor->act (newValue);
 }
 
 void Pendulum::stopMotor () {
- 	M_MOTOR->act (0);
+ 	mMotor->act (0);
 }
 
 PState Pendulum::getState () {

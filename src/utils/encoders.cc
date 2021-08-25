@@ -20,16 +20,16 @@
 
 #include "encoders.hh"
 
-int_64b MotorEncoder::Internal::encoder = 0;
-int_32b MotorEncoder::Internal::stateA = 0,
-	MotorEncoder::Internal::stateB = 0;
-const int_8b *MotorEncoder::Internal::mWireA;
-const int_8b *MotorEncoder::Internal::mWireB;
+int_64b Encoder::Internal::encoder = 0;
+int_32b Encoder::Internal::stateA = 0,
+	Encoder::Internal::stateB = 0;
+const int_8b *Encoder::Internal::mWireA;
+const int_8b *Encoder::Internal::mWireB;
 
-int_8b MotorEncoder::*mWireA;
-int_8b MotorEncoder::*mWireB;
+int_8b Encoder::*mWireA;
+int_8b Encoder::*mWireB;
 
-MotorEncoder::MotorEncoder(int_8b wireA, int_8b wireB) : mWireA (wireA), mWireB (wireB) {
+Encoder::Encoder(int_8b wireA, int_8b wireB, float_32b CPR) : mWireA (wireA), mWireB (wireB), NUMBER_OF_FULL_ROTATE_PULSES(CPR) {
 
 	internal.mWireA = &mWireA;
 	internal.mWireB = &mWireB;
@@ -38,7 +38,7 @@ MotorEncoder::MotorEncoder(int_8b wireA, int_8b wireB) : mWireA (wireA), mWireB 
 	wiringPiISR(mWireB, INT_EDGE_BOTH, internal.B);
 }
 
-void MotorEncoder::Internal::A() {
+void Encoder::Internal::A() {
     if (stateA == stateB) {
         encoder++;
     }
@@ -46,14 +46,14 @@ void MotorEncoder::Internal::A() {
 }
 
 
-void MotorEncoder::Internal::B() {
+void Encoder::Internal::B() {
     if (stateA == stateB) {
         encoder--;
     }
     stateB = digitalRead(*mWireB);
 }
 
-void MotorEncoder::ISR() {
+void Encoder::ISR() {
   t++;
   if (t == 1) {
     angle_previous = getAngle ();
@@ -67,10 +67,10 @@ void MotorEncoder::ISR() {
   }
 }
 
-float_32b MotorEncoder::getAngle () {
+float_32b Encoder::getAngle () {
 	return internal.encoder * 360.0 / NUMBER_OF_FULL_ROTATE_PULSES;
 }
 
-float_32b MotorEncoder::getVelocity () {
+float_32b Encoder::getVelocity () {
 	return velocity;
 }

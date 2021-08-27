@@ -51,6 +51,7 @@ class PendulumEnv(gym.Env):
         self.state = np.array([[]])
         self.stepSize = 0.006
         self.alpha_threshold_radians = 0.122
+        self.alpha_threshold_radians_2 = np.pi / 2
         self.count = 0
         self.done = 1
         self.lenOfTimeSeries = lenOfTimeSeries
@@ -79,13 +80,13 @@ class PendulumEnv(gym.Env):
         cState = np.reshape(cState, (4))
         oldState = np.reshape(oldState, (4))
         result = 0.0
-        #TODO
-        if (np.abs(cState[2]) <= self.alpha_threshold_radians):
-            result = 100.
-        if np.abs(cState[2]) < np.abs(oldState[2]):
-            result = 40.
+        
+        if np.abs(cState[2]) <= self.alpha_threshold_radians:
+            result = 15.
+        elif np.abs(cState[2]) <= self.alpha_threshold_radians_2:
+            result = ((np.pi / 2 - np.abs(cState[2])) * 2 / np.pi) * 10
         else:
-            result = -10.
+            result = -100.
 
         return result
 
@@ -124,6 +125,9 @@ class PendulumEnv(gym.Env):
         state = np.append(state, self.norm(newtheta, newdtheta, newalpha, newdalpha))
         state = np.reshape(state, (lenOfTimeSeries, 4, 1))
         reward = self.reinforcenmentSignal(state[lenOfTimeSeries - 1], self.state[lenOfTimeSeries - 1])
+
+        done = reward == -100
+
         self.state = state
         self.reward = np.delete(self.reward, 0)
         self.reward = np.append(self.reward, reward)
@@ -134,18 +138,15 @@ class PendulumEnv(gym.Env):
         else:
             self.count = 0
 
-
-        done = bool(
-             np.abs(newalpha) <= self.alpha_threshold_radians
-        )
-
         return self.getCurrentState(), reward, done, {}
 
 
-    def reset(self):
+    def reset(self, init_state = None):
         lenOfTimeSeries = self.lenOfTimeSeries
-        high = np.array([np.pi, 1, np.pi, 1])
+        high = np.array([np.pi, 10, 0.6, 10])
         theta, dtheta, alpha, dalpha = self.np_random.uniform(low =- high, high = high)
+
+        #theta, dtheta, alpha, dalpha = (0, 0, 0.6, 5)
 
         self.state = np.array(self.norm(theta, dtheta, alpha, dalpha) * lenOfTimeSeries)
         self.state = np.reshape(self.state, (lenOfTimeSeries, 4, 1))

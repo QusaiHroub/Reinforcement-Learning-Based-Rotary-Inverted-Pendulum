@@ -47,6 +47,8 @@ def setParams (argv):
             checkpointer_restor = True
         elif argv[2] == '--load':
             load_tf_policy = True
+        elif argv[2] == '--train':
+            return False, False, 0
 
     if len(argv) >= 4:
         if checkpointer_restor:

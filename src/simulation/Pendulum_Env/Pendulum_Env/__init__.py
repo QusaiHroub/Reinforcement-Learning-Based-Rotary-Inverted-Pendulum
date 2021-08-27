@@ -24,3 +24,8 @@ register(
     id='pendulum_env-v0',
     entry_point='Pendulum_Env.envs:PendulumEnv',
 )
+
+register(
+    id='pendulum_env_time_series-v0',
+    entry_point='Pendulum_Env.envs:PendulumEnvTimeSeries',
+)

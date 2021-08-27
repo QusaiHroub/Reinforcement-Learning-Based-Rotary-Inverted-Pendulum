@@ -18,3 +18,5 @@
 
 
 from Pendulum_Env.envs.pendulum_env import PendulumEnv
+from Pendulum_Env.envs.pendulum_env_time_series import PendulumEnvTimeSeries
+

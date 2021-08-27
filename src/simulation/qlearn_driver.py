@@ -40,7 +40,6 @@ def conve_state(state):
          An Object of State values
     """
     
-    state = np.reshape(state, (4))
     cState = State()
     cState.set_motor_angle(state[0])
     cState.set_motor_angular_velocity(state[1])
@@ -72,7 +71,7 @@ def run_qlearn():
     running_step = None
 
     env_name = 'pendulum_env-v0'
-    pendulumEnv = gym.make(env_name, lenOfTimeSeries=1)
+    pendulumEnv = gym.make(env_name)
     print("pendulum environment init done")
 
     qlearn = QLearn(actions=pendulumEnv.actions,

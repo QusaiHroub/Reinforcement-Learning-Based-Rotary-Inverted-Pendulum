@@ -62,7 +62,7 @@ num_iterations = 20000 # @param {type:"integer"}
 num_episodes = 100
 
 
-initial_collect_steps = 100  # @param {type:"integer"}
+initial_collect_steps = 512  # @param {type:"integer"}
 collect_steps_per_iteration = 1  # @param {type:"integer"}
 replay_buffer_max_length = 100000  # @param {type:"integer"}
 
@@ -76,9 +76,6 @@ conv_to_percentage = 2
 
 num_eval_episodes = 10  # @param {type:"integer"}
 eval_interval = 1000  # @param {type:"integer"}
-
-
-env_name = 'pendulum_env-v0' # @param {type:"string"}
 
 
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
@@ -99,7 +96,7 @@ epsilon_discount = 0.85
 max_to_keep = 10
 
 
-def build_environments (is_cc):
+def build_environments (is_cc, env_name):
     """build enviornments for train and test
 
     Parameters
@@ -118,8 +115,8 @@ def build_environments (is_cc):
         train_py_env = suite_gym.load(env_name)
         eval_py_env = suite_gym.load(env_name)
     else:
-        train_py_env = suite_gym.load(env_name, lenOfTimeSeries=1)
-        eval_py_env = suite_gym.load(env_name, lenOfTimeSeries=1)
+        train_py_env = suite_gym.load(env_name)
+        eval_py_env = suite_gym.load(env_name)
 
 
     action_tensor_spec = tensor_spec.from_spec(train_py_env.action_spec())
@@ -276,7 +273,7 @@ def collect_step(environment, policy, buffer):
 
 
 def collect_data(environment, policy, buffer, steps):
-    """collect data for steps - deprecated
+    """collect data for steps
 
     Parameters
     ----------
@@ -370,7 +367,11 @@ def run_dqlearn (is_cc, checkpointer_restor = False, load_tf_policy = False, con
         save the latest checkpointer and tf_policy
     """
 
-    train_env, train_py_env, eval_env, eval_py_env, action_tensor_spec = build_environments (is_cc)
+    env_name = 'pendulum_env-v0'
+    if is_cc: 
+        env_name = 'pendulum_env_time_series-v0'
+
+    train_env, train_py_env, eval_env, eval_py_env, action_tensor_spec = build_environments (is_cc, env_name)
     num_actions = action_tensor_spec.maximum - action_tensor_spec.minimum + 1
 
     if load_tf_policy:
@@ -396,7 +397,8 @@ def run_dqlearn (is_cc, checkpointer_restor = False, load_tf_policy = False, con
             train_step_counter=train_step_counter,
             gamma=Gamma,
             epsilon_greedy=Epsilon,
-            target_update_period=num_epochs)
+            target_update_period=num_epochs
+        )
 
         agent.initialize()
         target_q_net.summary()
@@ -412,13 +414,17 @@ def run_dqlearn (is_cc, checkpointer_restor = False, load_tf_policy = False, con
         replay_buffer = tf_uniform_replay_buffer.TFUniformReplayBuffer(
             data_spec=agent.collect_data_spec,
             batch_size=train_env.batch_size,
-            max_length=replay_buffer_max_length)
+            max_length=replay_buffer_max_length
+        )
+
+        collect_data(train_env, random_policy, replay_buffer, initial_collect_steps)
 
         collect_driver = dynamic_step_driver.DynamicStepDriver(
             train_env,
-            agent.collect_policy,
+            collect_policy,
             observers=[replay_buffer.add_batch],
-            num_steps=collect_steps_per_iteration)
+            num_steps=collect_steps_per_iteration
+        )
 
         train_checkpointer = common.Checkpointer(
             ckpt_dir=checkpoint_dir,
@@ -443,7 +449,8 @@ def run_dqlearn (is_cc, checkpointer_restor = False, load_tf_policy = False, con
         dataset = replay_buffer.as_dataset(
             num_parallel_calls=3,
             sample_batch_size=batch_size,
-            num_steps=2).prefetch(3)
+            num_steps=2
+        ).prefetch(3)
 
         iterator = iter(dataset)
 

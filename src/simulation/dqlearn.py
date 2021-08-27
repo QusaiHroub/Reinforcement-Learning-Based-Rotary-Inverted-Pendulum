@@ -59,7 +59,7 @@ import Pendulum_Env
 """## Hyperparameters"""
 
 num_iterations = 20000 # @param {type:"integer"}
-num_episodes = 20000
+num_episodes = 100
 
 
 initial_collect_steps = 100  # @param {type:"integer"}
@@ -67,7 +67,7 @@ collect_steps_per_iteration = 1  # @param {type:"integer"}
 replay_buffer_max_length = 100000  # @param {type:"integer"}
 
 
-batch_size = 256  # @param {type:"integer"}
+batch_size = 512  # @param {type:"integer"}
 learning_rate = 1e-3  # @param {type:"number"}
 log_interval = 200  # @param {type:"integer"}
 num_epochs = 200
@@ -330,7 +330,7 @@ def train (agent, iterator, collect_driver, train_checkpointer):
 
         step = agent.train_step_counter.numpy()
 
-        print('step = {0}: loss = {1}'.format(step, train_loss))
+        print('\nstep = {0}: loss = {1}'.format(step, train_loss))
 
 
 def embed_gif(gif_buffer):
@@ -339,8 +339,8 @@ def embed_gif(gif_buffer):
     return IPython.display.HTML(tag)
 
 
-def run_episodes_and_create_video(policy, eval_tf_env, eval_py_env):
-    num_episodes = 3
+def run_episodes_and_create_video(policy, eval_tf_env, eval_py_env, init_state = None):
+    num_episodes = 1000
     frames = []
     for _ in range(num_episodes):
         time_step = eval_tf_env.reset()
@@ -348,13 +348,10 @@ def run_episodes_and_create_video(policy, eval_tf_env, eval_py_env):
         while not time_step.is_last():
             action_step = policy.action(time_step)
             time_step = eval_tf_env.step(action_step.action)
-            frames.append(eval_py_env.render())
-    gif_file = io.BytesIO()
-    imageio.mimsave(gif_file, frames, format='gif', fps=60)
-    IPython.display.display(embed_gif(gif_file.getvalue()))
+            eval_tf_env.render()
 
 
-def run_dqlearn (is_cc, checkpointer_restor = False, load_tf_policy = False):
+def run_dqlearn (is_cc, checkpointer_restor = False, load_tf_policy = False, continueTrainEpisodes = 10, init_state = None):
     """run deep q-learn
 
     Parameters
@@ -377,8 +374,7 @@ def run_dqlearn (is_cc, checkpointer_restor = False, load_tf_policy = False):
     num_actions = action_tensor_spec.maximum - action_tensor_spec.minimum + 1
 
     if load_tf_policy:
-        agent = tf.compat.v2.saved_model.load(policy_dir)
-        agent.q_network.summary()
+        eval_policy = tf.compat.v2.saved_model.load(policy_dir)
     else:
         if is_cc:
             fc_layer_params = (128)
@@ -405,54 +401,56 @@ def run_dqlearn (is_cc, checkpointer_restor = False, load_tf_policy = False):
         agent.initialize()
         target_q_net.summary()
 
-    eval_policy = agent.policy
-    collect_policy = agent.collect_policy
+        eval_policy = agent.policy
+        collect_policy = agent.collect_policy
 
-    random_policy = random_tf_policy.RandomTFPolicy(train_env.time_step_spec(),
-                                                    train_env.action_spec())
+        random_policy = random_tf_policy.RandomTFPolicy(train_env.time_step_spec(),
+                                                        train_env.action_spec())
 
-    #compute_avg_return(eval_env, random_policy, num_eval_episodes)
+        #compute_avg_return(eval_env, random_policy, num_eval_episodes)
 
-    replay_buffer = tf_uniform_replay_buffer.TFUniformReplayBuffer(
-        data_spec=agent.collect_data_spec,
-        batch_size=train_env.batch_size,
-        max_length=replay_buffer_max_length)
+        replay_buffer = tf_uniform_replay_buffer.TFUniformReplayBuffer(
+            data_spec=agent.collect_data_spec,
+            batch_size=train_env.batch_size,
+            max_length=replay_buffer_max_length)
 
-    collect_driver = dynamic_step_driver.DynamicStepDriver(
-        train_env,
-        agent.collect_policy,
-        observers=[replay_buffer.add_batch],
-        num_steps=collect_steps_per_iteration)
+        collect_driver = dynamic_step_driver.DynamicStepDriver(
+            train_env,
+            agent.collect_policy,
+            observers=[replay_buffer.add_batch],
+            num_steps=collect_steps_per_iteration)
 
-    train_checkpointer = common.Checkpointer(
-        ckpt_dir=checkpoint_dir,
-        max_to_keep=max_to_keep,
-        agent=agent,
-        policy=agent.policy,
-        replay_buffer=replay_buffer,
-        global_step=train_step_counter
-    )
+        train_checkpointer = common.Checkpointer(
+            ckpt_dir=checkpoint_dir,
+            max_to_keep=max_to_keep,
+            agent=agent,
+            policy=agent.policy,
+            replay_buffer=replay_buffer,
+            global_step=train_step_counter
+        )
 
-    if checkpointer_restor:
-        train_checkpointer.initialize_or_restore()
+        if checkpointer_restor:
+            train_checkpointer.initialize_or_restore()
+            global num_episodes
+            num_episodes = continueTrainEpisodes
 
-    tf_policy_saver = policy_saver.PolicySaver(agent.policy)
+        tf_policy_saver = policy_saver.PolicySaver(agent.policy)
 
-    train_checkpointer.save(train_step_counter)
+        train_checkpointer.save(train_step_counter)
 
-    collect_driver.run()
+        collect_driver.run()
 
-    dataset = replay_buffer.as_dataset(
-        num_parallel_calls=3,
-        sample_batch_size=batch_size,
-        num_steps=2).prefetch(3)
+        dataset = replay_buffer.as_dataset(
+            num_parallel_calls=3,
+            sample_batch_size=batch_size,
+            num_steps=2).prefetch(3)
 
-    iterator = iter(dataset)
+        iterator = iter(dataset)
 
-    train(agent, iterator, collect_driver, train_checkpointer)
+        train(agent, iterator, collect_driver, train_checkpointer)
 
-    tf_policy_saver.save(policy_dir)
+        tf_policy_saver.save(policy_dir)
 
     print ('global_step:', train_step_counter)
-    run_episodes_and_create_video(agent.policy, eval_env, eval_py_env)
+    run_episodes_and_create_video(eval_policy, eval_env, eval_py_env, init_state)
     

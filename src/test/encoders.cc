@@ -8,8 +8,8 @@ using namespace std;
 
 auto main () -> int {
     wiringPiSetup();
-    MotorEncoder *const M_MOTOR_ENCODER =
-		new MotorEncoder(MOTOR_ENCODER_WIRE_A, MOTOR_ENCODER_WIRE_B);
+    Encoder *const M_MOTOR_ENCODER =
+		new Encoder(MOTOR_ENCODER_WIRE_A, MOTOR_ENCODER_WIRE_B);
 
     while (true) {
         cout << M_MOTOR_ENCODER->getAngle() << endl;

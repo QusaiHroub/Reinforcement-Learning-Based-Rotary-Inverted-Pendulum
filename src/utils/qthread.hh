@@ -28,10 +28,16 @@ class QThread {
 	atomic<bool> active{true};
 
     public:
+    	QThread();
+    	QThread(const QThread&);
     	template<typename T>
         void start(T);
         void stop();
 };
+
+QThread::QThread() {}
+
+QThread::QThread(const QThread&) {}
 
 template<typename T>
 void QThread::start(T function) {

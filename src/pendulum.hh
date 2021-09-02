@@ -42,6 +42,7 @@ class Pendulum {
 
 public:
 	Pendulum();
+	Pendulum(const Pendulum&);
 	~Pendulum();
 
 	void updateMotorPWM(const int_16b);
@@ -69,6 +70,8 @@ Pendulum::Pendulum () {
     			mPendulumEncoder->getVelocity ()));
 	});
 }
+
+Pendulum::Pendulum(const Pendulum&) : Pendulum() {}
 
 Pendulum::~Pendulum () {
 	delete mMotor;

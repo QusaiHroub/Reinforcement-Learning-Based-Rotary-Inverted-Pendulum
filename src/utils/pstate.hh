@@ -58,10 +58,7 @@ class PState {
 
 	static const size_16b SIZE = 4;
 
-    //0 - pendulum angle - must be in radians
-    //1 - pendulum angular velocity - must be in radians/second
-    //2 - motor angle - must be in radians
-    //3 - motor angular velocity - must be in radians/second
+    //[motor angle, motor angular velocity, pendulum angle, pendulum angular velocity]
     Box *mStateParam[SIZE];
 
 public:
@@ -69,13 +66,13 @@ public:
            float_32b motorAngle = 0.0, float_32b motorAngularVelocity = 0.0) {
 
            mStateParam[0] = dynamic_cast <Box *> (new Angle());
-           *mStateParam[0] = pendulumAngle;
+           *mStateParam[0] = motorAngle;
            mStateParam[2] = dynamic_cast <Box *> (new Angle());
-           *mStateParam[2] = motorAngle;
+           *mStateParam[2] = pendulumAngle;
            mStateParam[1] = dynamic_cast <Box *> (new Velocity());
-           *mStateParam[1] = pendulumAngularVelocity;
+           *mStateParam[1] = motorAngularVelocity;
            mStateParam[3] = dynamic_cast <Box *> (new Velocity());
-           *mStateParam[3] = motorAngularVelocity;
+           *mStateParam[3] = pendulumAngularVelocity;
 	}
 
     PState (const PState& state) : PState() {
@@ -84,28 +81,28 @@ public:
 
     //Getters
     float_32b getPendulumAngle () {
-        return mStateParam[0]->getValue ();
+        return mStateParam[2]->getValue ();
     }
     float_32b getPendulumAngle () const {
-        return mStateParam[0]->getValue ();
+        return mStateParam[2]->getValue ();
     }
     float_32b getMotorAngle () {
-        return mStateParam[2]->getValue ();
+        return mStateParam[0]->getValue ();
     }
     float_32b getMotorAngle () const {
-        return mStateParam[2]->getValue ();
+        return mStateParam[0]->getValue ();
     }
     float_32b getPendulumAngularVelocity () {
-        return mStateParam[1]->getValue ();
+        return mStateParam[3]->getValue ();
     }
     float_32b getPendulumAngularVelocity () const {
-        return mStateParam[1]->getValue ();
+        return mStateParam[3]->getValue ();
     }
     float_32b getMotorAngularVelocity () {
-        return mStateParam[3]->getValue ();
+        return mStateParam[1]->getValue ();
     }
     float_32b getMotorAngularVelocity () const {
-        return mStateParam[3]->getValue ();
+        return mStateParam[1]->getValue ();
     }
 
     /**
@@ -119,16 +116,16 @@ public:
 
     //Setters
     void setPendulumAngle (const float_32b pendulumAngle) {
-        mStateParam[0]->setValue (pendulumAngle);
+        mStateParam[2]->setValue (pendulumAngle);
     }
     void setMotorAngle (const float_32b motorAngle) {
-        mStateParam[2]->setValue (motorAngle);
+        mStateParam[0]->setValue (motorAngle);
     }
     void setPendulumAngularVelocity (const float_32b pendulumAngularVelocity) {
-        mStateParam[1]->setValue (pendulumAngularVelocity);
+        mStateParam[3]->setValue (pendulumAngularVelocity);
     }
     void setMotorAngularVelocity (const float_32b motorAngularVelocity) {
-        mStateParam[3]->setValue (motorAngularVelocity);
+        mStateParam[1]->setValue (motorAngularVelocity);
     }
 
     /**

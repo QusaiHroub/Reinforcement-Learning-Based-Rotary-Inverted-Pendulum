@@ -1,0 +1,8 @@
+set(SOURCE_FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/encoders.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/math.cc
+	${CMAKE_CURRENT_SOURCE_DIR}/motor.cc
+)
+
+add_library(utils SHARED ${SOURCE_FILES})
+
